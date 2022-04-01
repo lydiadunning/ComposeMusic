@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+    <title>Music</title>
+    <link rel="stylesheet" href="./style.css" type="text/css">
+    <script defer src="./music.js"></script>
+    <script src="./band.js-master/dist/band.min.js"></script>
+    <script src="drawCards.js"></script>
+
+
+<!--     <script defer src="./tryStuff.js"></script>  -->
+
+</head>
+<html>
+<body>
+  <div id="wholething">
+    <h1>Make Some Music</h1>
+    <div id="newcard">
+      <div class="accept">
+        <div>
+          <label for="cardnumber">Number: </label>
+          <input type="text" id="cardnumber" minlength="4" maxlength="4">
+        </div>
+        <button class= "button" type="button" id="playme">Click to Play</button>
+        <button class="button" type="button" id="addtolist">Add to Composition</button>
+      </div>
+      <div id="sample">
+
+      </div>
+    </div>
+    <div class="sheetmusic">
+      <div id='listcontrols'>
+        <button class="button" type="button" id="playall">Play Composition</button>
+        <button class="button" type="button" id="clear">Clear Composition</button>
+        <button type="button" id="save">Save Composition</button>
+      </div>
+      <div class="musicdisplay" class=bgstaff id="display">
+      </div>
+    </div>
+  </div>
+</body>
+</html>
