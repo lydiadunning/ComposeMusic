@@ -12,30 +12,46 @@
 </head>
 <html>
 <body>
-  <div id="wholething">
-    <h1>Make Some Music</h1>
-    <div id="newcard">
-      <div class="accept">
-        <div>
-          <label for="cardnumber">Number: </label>
-          <input type="text" id="cardnumber" minlength="4" maxlength="4">
-        </div>
-        <button class= "button" type="button" id="playme">Click to Play</button>
-        <button class="button" type="button" id="addtolist">Add to Composition</button>
-      </div>
-      <div id="sample">
+  <header>
+      <h1>Make Some Music</h1>
+  </header>
+
+  <div id="controls">
+    <div id="primary">
+      <div id="instructions" class="hidden side">
 
       </div>
+      <div id="newcard">
+        <div class="accept">
+          <div>
+            <label for="cardnumber">Number: </label>
+            <input type="text" id="cardnumber" minlength="4" maxlength="4">
+          </div>
+          <button class= "button" type="button" id="playme">Click to Play</button>
+          <button class="button" type="button" id="addtolist">Add to Composition</button>
+        </div>
+        <div id="sample">
+          <!-- a card appears here -->
+        </div>
+      </div>
+      <div id="load" class="hidden side">
+        <h3>Saved Games</h3>
+        <ol>
+          <!-- a list of saved games appears here -->
+        </ol>
+      </div>
     </div>
-    <div class="sheetmusic">
-      <div id='listcontrols'>
-        <button class="button" type="button" id="playall">Play Composition</button>
-        <button class="button" type="button" id="clear">Clear Composition</button>
-        <button type="button" id="save">Save Composition</button>
-      </div>
-      <div class="musicdisplay" class=bgstaff id="display">
-      </div>
+    <div id='listcontrols'>
+      <button class="button" type="button" id="playall">Play Composition</button>
+      <button class="button" type="button" id="clear">Clear Composition</button>
+      <button type="button" id="save">Save Composition</button>
     </div>
   </div>
+
+
+  <div class="musicdisplay" class=bgstaff id="display">
+    <!-- the composition appears here -->
+  </div>
+
 </body>
 </html>
