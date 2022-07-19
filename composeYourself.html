@@ -7,6 +7,7 @@
     <script src="drawCards.js"></script>
 
 
+
 <!--     <script defer src="./tryStuff.js"></script>  -->
 
 </head>
@@ -18,20 +19,30 @@
 
   <div id="controls">
     <div id="primary">
-      <div id="instructions" class="hidden side">
+      <div id="cardlist" class="side">
 
       </div>
       <div id="newcard">
         <div class="accept">
-          <div>
+          <div class="number-input">
             <label for="cardnumber">Number: </label>
-            <input type="text" id="cardnumber" minlength="4" maxlength="4">
+            <input type="text" id="cardnumber" minlength="4" maxlength="4" autofocus>
           </div>
           <button class= "button" type="button" id="playme">Click to Play</button>
+          <button class= "button" type="button" id="random">Random Card</button>
           <button class="button" type="button" id="addtolist">Add to Composition</button>
         </div>
         <div id="sample">
           <!-- a card appears here -->
+          <!-- <p class="turn-card" id='sample-h'>⤺</p>
+          <p class="turn-card" id='sample-v'>⤻</p>
+          <p class="turn-card" id='sample-v'>⤹</p> -->
+          <div class='card-control'>
+            <div class="top flip v"></div>
+            <div class="right flip h"></div>
+            <div class="bottom flip v"></div>
+            <div class="left flip h"></div>
+          </div>
         </div>
       </div>
       <div id="load" class="hidden side">
@@ -44,7 +55,7 @@
     <div id='listcontrols'>
       <button class="button" type="button" id="playall">Play Composition</button>
       <button class="button" type="button" id="clear">Clear Composition</button>
-      <button type="button" id="save">Save Composition</button>
+      <button class="button" type="button" id="save" disabled>Save Composition</button>
     </div>
   </div>
 

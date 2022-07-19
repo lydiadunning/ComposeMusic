@@ -1,0 +1,233 @@
+/*
+#wholething {
+  display: grid;
+  grid-template-columns: 8px auto 8px;
+  grid-template-rows: 8px auto 12px;
+  grid-auto-flow: column;
+}
+*/
+
+:root {
+    --outline-color: steelblue;
+    --button-color: lightsteelblue;
+    --background-color: aliceblue;
+    --button-outline: #295D8A;
+  }
+
+header {
+  text-align: center;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  border-color: var(--outline-color);
+  border-width: 3px;
+  border-style: solid;
+}
+
+#controls {
+  background-color: var(--outline-color);
+
+}
+
+#primary {
+  height: 226px;
+  display: flex;
+  flex-direction: row
+}
+
+.side {
+  background-color: var(--background-color);
+  border-color: var(--outline-color);
+  border-width: 3px;
+  border-style: solid;
+  flex: 1;
+}
+
+#newcard {
+  /* height: 220px; */
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: row;
+  flex: 2;
+  /* margin-left: 25%;
+  margin-right: 25%; */
+  border-color: var(--outline-color);
+  border-width: 3px;
+  border-style: solid;
+}
+
+.accept {
+  display: flex;
+  flex-direction: column;
+  height: 220px;
+  width: 40%;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  background-color: var(--button-color);
+  align-self: stretch;
+  border-color: var(--button-outline);
+  border-width: 3px;
+  border-style: solid;
+  font-size: 1rem;
+  padding: 0.3em;
+  border-radius: 0.3em;
+
+}
+
+#listcontrols .button {
+  width: 10em;
+}
+
+:hover.button {
+  font-weight: bold;
+}
+
+#card-example-deck {
+  width: 100%;
+  height: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  background-color: var(--background-color);
+  align-content: space-around;
+  justify-content: center;
+}
+
+#example-title {
+  height: 20%;
+  text-align: center;
+  margin: 0;
+}
+
+.example-card {
+  padding: 0.3em;
+  border-bottom: solid 1px var(--button-color);
+  border-right:  solid 1px var(--button-color);
+  border-radius: 2px;
+}
+
+:hover.example-card {
+  background-color: var(--button-color);
+  cursor: default;
+  font-weight: bold;
+}
+
+#sample {
+  height: 220px;
+  min-width: 320px;
+  width: 40%;
+  background-color: inherit;
+  margin-left: 50px;
+}
+
+#cardnumber {
+  width: 2.5em;
+  font-size: 1em;
+}
+
+#display {
+  /* set width to the highest multiple of 320 that fits in display width */
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 220px;
+  width = 100%
+  background-size: cover;
+  background-image: url(tryStuff.svg)
+  /* background-image: url('data:image/svg+xml,\
+  <svg height="200">\
+  <line x1="0" x2="300" y1="40" y2="40" stroke="lightsteelblue" stroke-width="3"></line>\
+  <line x1="0" x2="300" y1="70" y2="70" stroke="lightsteelblue" stroke-width="3"></line>\
+  <line x1="0" x2="300" y1="100" y2="100" stroke="lightsteelblue" stroke-width="3"></line>\
+  <line x1="0" x2="300" y1="130" y2="130" stroke="lightsteelblue" stroke-width="3"></line>\
+  <line x1="0" x2="300" y1="160" y2="160" stroke="lightsteelblue" stroke-width="3"></line>\
+  </svg>') */
+}
+
+#listcontrols {
+  width: 60%;
+  margin-left: 20%;
+  margin-right: 20%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.number-input {
+  font-size: 1.3em;
+}
+
+
+
+.card {
+  margin: 10px;
+}
+
+.turn-card {
+  position: absolute;
+  opacity: 0;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+:hover.turn-card {
+  opacity: 30%;
+  color: var(--button-outline);
+}
+
+.card-control > .flip {
+  opacity: 50%;
+}
+
+.card-control {
+  position:absolute;
+  margin: 10px;
+  width: 300px;
+  height: 200px;
+  display: grid;
+  grid-template-columns: 15% 70% 15%;
+  grid-template-rows: 20% 60% 20%;
+  grid-template-areas:
+    ". top ."
+    "left . right"
+    ". bottom .";
+}
+
+.card-control > .top {
+  grid-area: top;
+  cursor: n-resize;
+}
+
+:hover.top {
+  background: radial-gradient(ellipse at top, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+}
+
+.card-control > .right {
+  grid-area: right;
+  cursor: e-resize;
+}
+
+:hover.right {
+  background: radial-gradient(ellipse at right, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+}
+
+.card-control > .bottom {
+  grid-area: bottom;
+  cursor: s-resize;
+}
+
+:hover.bottom {
+  background: radial-gradient(ellipse at bottom, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+}
+
+.card-control > .left {
+  grid-area: left;
+  cursor: w-resize;
+}
+
+:hover.left {
+  background: radial-gradient(ellipse at left, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+}

@@ -165,8 +165,14 @@ function drawAllNotes (cardNotes) {
       const xAxis1 = xAxis - X_AXIS_Q_OFFSET
       noteCount++
       const xAxis2 = xAxis + X_AXIS_Q_OFFSET
-      const yAxis2 = VISUAL_STAFF[cardNotes[noteCount].note]
-      stemUp = stemUp || cardNotes[noteCount].note < 4 // just in case
+      const secondNote = cardNotes[noteCount].note
+      const yAxis2 = VISUAL_STAFF[secondNote]
+      if (Math.abs(4 - currentNote.note) < Math.abs(4 - secondNote)) {
+        stemUp = secondNote < 4
+      }
+      // range of notes = 1-7.  center = 4
+      // stemUp = stemUp || cardNotes[noteCount].note < 4 // just in case
+
       drawnNotes.push(drawEighthNotePair({
         x: xAxis1.toString(),
         y: yAxis.toString()
