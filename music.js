@@ -74,6 +74,41 @@ function Card (firstThreeNumbers, notes1) {
   }
 }
 
+const newCards = [new Card('400', [new MyNote(2, 'half'), new MyNote(6, 'quarter'), new MyNote(5, 'quarter')]),
+            new Card('401', [new MyNote(5, 'half'), new MyNote(4, 'quarter'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth')]),
+            new Card('402', [new MyNote(6, 'quarter'), new MyNote(2, 'quarter'), new MyNote(3, 'half')]),
+            new Card('405', [new MyNote(4, 'quarter'), new MyNote(1, 'quarter'), new MyNote(6, 'half')]),
+            new Card('406', [new MyNote(2, 'quarter'), new MyNote(1, 'half'), new MyNote(4, 'eighth'), new MyNote(6, 'eighth')]),
+            new Card('408', [new MyNote(4, 'half'), new MyNote(4, 'quarter'), new MyNote(5, 'quarter')]),
+            new Card('409', [new MyNote(5, 'eighth'), new MyNote(1, 'eighth'), new MyNote(5, 'half'), new MyNote(3, 'quarter')]),
+            new Card('410', [new MyNote(5, 'quarter'), new MyNote(4, 'eighth'), new MyNote(6, 'eighth'), new MyNote(6, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth')]),
+            new Card('411', [new MyNote(5, 'eighth'), new MyNote(3, 'eighth'), new MyNote(5, 'half'), new MyNote(5, 'quarter')]),
+            new Card('412', [new MyNote(4, 'half'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(5, 'eighth')]),
+            new Card('413', [new MyNote(1, 'quarter'), new MyNote(4, 'half'), new MyNote(2, 'quarter')]),
+            new Card('414', [new MyNote(2, 'quarter'), new MyNote(1, 'half'), new MyNote(6, 'eighth'), new MyNote(2, 'eighth')]),
+            new Card('415', [new MyNote(1, 'half'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth')]),
+            new Card('416', [new MyNote(1, 'half'), new MyNote(1, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth')]),
+            new Card('417', [new MyNote(3, 'quarter'), new MyNote(1, 'quarter'), new MyNote(1, 'half')]),
+            new Card('418', [new MyNote(6, 'quarter'), new MyNote(4, 'quarter'), new MyNote(2, 'quarter'), new MyNote(3, 'quarter')]),
+            new Card('419', [new MyNote(4, 'quarter'), new MyNote(3, 'quarter'), new MyNote(3, 'half')]),
+            new Card('420', [new MyNote(4, 'half'), new MyNote(5, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth')]),
+            new Card('421', [new MyNote(3, 'eighth'), new MyNote(2, 'eighth'), new MyNote(1, 'quarter'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(5, 'quarter')]),
+            new Card('423', [new MyNote(5, 'eighth'), new MyNote(5, 'eighth'), new MyNote(2, 'quarter'), new MyNote(6, 'half')]),
+            new Card('424', [new MyNote(4, 'quarter'), new MyNote(3, 'half'), new MyNote(1, 'eighth'), new MyNote(1, 'eighth')]),
+            new Card('427', [new MyNote(2, 'quarter'), new MyNote(5, 'quarter'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(6, 'eighth')]),
+            new Card('428', [new MyNote(5, 'eighth'), new MyNote(6, 'eighth'), new MyNote(5, 'half'), new MyNote(5, 'quarter')]),
+            new Card('429', [new MyNote(2, 'eighth'), new MyNote(6, 'eighth'), new MyNote(3, 'half'), new MyNote(5, 'eighth'), new MyNote(3, 'eighth')]),
+            new Card('430', [new MyNote(6, 'quarter'), new MyNote(6, 'eighth'), new MyNote(4, 'eighth'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth')]),
+            new Card('431', [new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(2, 'eighth'), new MyNote(1, 'half')]),
+            new Card('432', [new MyNote(1, 'quarter'), new MyNote(6, 'quarter'), new MyNote(1, 'eighth'), new MyNote(5, 'eighth'), new MyNote(2, 'eighth'), new MyNote(4, 'eighth')]),
+            new Card('433', [new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth'), new MyNote(5, 'eighth'), new MyNote(6, 'half')]),
+            new Card('437', [new MyNote(5, 'half'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth')]),
+            new Card('438', [new MyNote(3, 'half'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth'), new MyNote(6, 'quarter')]),
+            new Card('439', [new MyNote(3, 'quarter'), new MyNote(5, 'quarter'), new MyNote(1, 'eighth'), new MyNote(1, 'eighth'), new MyNote(5, 'quarter')]),
+            new Card('441', [new MyNote(2, 'eighth'), new MyNote(1, 'eighth'), new MyNote(2, 'half'), new MyNote(2, 'eighth'), new MyNote(6, 'eighth')]),
+]
+
+
 const cardDeck = [
   new Card('001', [
     new MyNote(4),
@@ -223,7 +258,32 @@ const cardDeck = [
     new MyNote(2),
     new MyNote(1, 'half')
   ])
-]
+].concat(newCards)
+
+
+// displays all newly created cards
+function showAllNewCards () {
+  const cardDisplay = document.getElementById('cardlist')
+  const title = document.createElement('h1')
+  title.append('Music Cards')
+  title.setAttribute('id', 'example-title')
+  cardDisplay.append(title)
+  const cardExampleDeck = document.createElement('div')
+  cardExampleDeck.setAttribute('id', 'card-example-deck')
+  const exampleDeck = cardDisplay.appendChild(cardExampleDeck)
+  newCards.forEach(card => {
+    const cardNumber = card.firstThreeNumbers + '1'
+    const cardLink = document.createElement('div')
+    cardLink.setAttribute('id', cardNumber + '-example')
+    cardLink.setAttribute('class', 'example-card')
+    cardLink.append(cardNumber)
+    exampleDeck.append(cardLink)
+  })
+  return document.getElementsByClassName('example-card')
+}
+
+
+
 
 // play plays sequences of music by interfacing with band.js
 // the callback is present as a reminder that it might be used to
@@ -318,14 +378,16 @@ const playlist = {
     const ids = this.getCardElementIds()
     for (let i = 0; i < ids.length; i++) {
       document.getElementById(ids[i]).onclick = () => {
-        console.log('Clicked')
       }
     }
   },
   remove: function (cardNumber, callback = () => {}) {
     const element = document.getElementById('display')
     const thisCard = document.getElementById(cardNumber)
-    element.removeChild(thisCard)
+    // console.log(element.children[0])
+    // console.log(thisCard)
+    // element.removeChild(thisCard)
+    thisCard.remove()
     callback()
   },
   clear: function () {
@@ -359,6 +421,7 @@ function cardPreview (e) {
 // ---event handling:---
 
 const numbersInput = document.getElementById('cardnumber')
+const numberCodeInput = new Event('input')
 numbersInput.addEventListener('input', cardPreview)
 numbersInput.addEventListener('click', () => {
   numbersInput.value = ''
@@ -393,6 +456,53 @@ playAllButton.onclick = () => {
   playlist.playAll()
   numbersInput.focus()
 }
+
+const randomButton = document.getElementById('random')
+randomButton.onclick = () => {
+  const randomCard = newCards[Math.floor(Math.random() * newCards.length)]
+  const randomFinal = Math.floor(Math.random() * 4) + 1
+  numbersInput.value = randomCard.firstThreeNumbers + randomFinal.toString()
+  numbersInput.dispatchEvent(numberCodeInput)
+}
+
+// XXXXXXXXXXXXX
+const cardExamples = showAllNewCards()
+Array.prototype.forEach.call(cardExamples, function (example) {
+  example.onclick = () => {
+    numbersInput.value = example.id.slice(0, 4)
+    numbersInput.dispatchEvent(numberCodeInput)
+  }
+})
+// XXXXXXXXXXXXX
+
+const cardFlippers = document.querySelectorAll('.flip')
+cardFlippers.forEach(x => {
+  x.onclick = () => {
+    let directionCode = numbersInput.value[3]
+    if (x.getAttribute('class').includes('v') && directionCode) {
+      switch (directionCode) {
+        case '1': directionCode = '4'; break
+        case '3': directionCode = '2'; break
+        case '2': directionCode = '3'; break
+        case '4': directionCode = '1'; break
+        default: throw new Error('invalid orientation')
+      }
+    } else if (x.getAttribute('class').includes('h') && directionCode) {
+      switch (directionCode) {
+        case '1': directionCode = '3'; break
+        case '3': directionCode = '1'; break
+        case '2': directionCode = '4'; break
+        case '4': directionCode = '2'; break
+        default: throw new Error('invalid orientation')
+      }
+    } else {
+      console.log('Something has gone wrong with class assignment.')
+      return
+    }
+    numbersInput.value = numbersInput.value.slice(0, 3) + directionCode
+    numbersInput.dispatchEvent(numberCodeInput)
+  }
+})
 
 // const saveButton = document.getElementById('save')
 // saveButton.onclick = () => {
