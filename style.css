@@ -198,36 +198,36 @@ body {
 
 .card-control > .top {
   grid-area: top;
-  cursor: n-resize;
+  cursor: grab;
 }
 
 :hover.top {
-  background: radial-gradient(ellipse at top, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+  background: radial-gradient(ellipse at top, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%);
 }
 
 .card-control > .right {
   grid-area: right;
-  cursor: e-resize;
+  cursor: grab;
 }
 
 :hover.right {
-  background: radial-gradient(ellipse at right, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+  background: radial-gradient(ellipse at right, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%);
 }
 
 .card-control > .bottom {
   grid-area: bottom;
-  cursor: s-resize;
+  cursor: grab;
 }
 
 :hover.bottom {
-  background: radial-gradient(ellipse at bottom, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+  background: radial-gradient(ellipse at bottom, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%);
 }
 
 .card-control > .left {
   grid-area: left;
-  cursor: w-resize;
+  cursor: grab;
 }
 
 :hover.left {
-  background: radial-gradient(ellipse at left, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+  background: radial-gradient(ellipse at left, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%);
 }

@@ -215,14 +215,14 @@ function drawNumber (cardNumber) {
 
 // drawCard calls all of the other functions for creating svg elements
 // and combines them into an svg.
-function drawCard (cardNumber, cardNotes) {
+function drawCard (cardNumber, cardNotes, cardId) {
   // Get the card's number.
   // write the card's number on the card
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.setAttribute('width', CARD_WIDTH)
   svg.setAttribute('height', CARD_HEIGHT)
   svg.setAttribute('class', 'card')
-  svg.setAttribute('id', cardNumber)
+  // svg.setAttribute('id', cardId)
   const cardOutline = drawCardOutline()
   svg.appendChild(cardOutline)
   const number = drawNumber(cardNumber)
@@ -236,11 +236,44 @@ function drawCard (cardNumber, cardNotes) {
   return svg
 }
 
+// this function generates the controls for a card.
+function addCardControl (cardNumber) {
+  // const cardDisplay = document.getElementById('cardlist')
+  // const title = document.createElement('h1')
+  // title.append('Music Cards')
+  // title.setAttribute('id', 'example-title')
+  // cardDisplay.append(title)
+
+  const cardControl = document.createElement('div')
+  cardControl.setAttribute('class', 'card-control')
+  // cardControl.setAttribute('id', 'control' + cardNumber)
+  const top = document.createElement('div')
+  top.setAttribute('class', 'top flip v')
+  cardControl.appendChild(top)
+  const right = document.createElement('div')
+  right.setAttribute('class', 'right flip h')
+  cardControl.appendChild(right)
+  const bottom = document.createElement('div')
+  bottom.setAttribute('class', 'bottom flip v')
+  cardControl.appendChild(bottom)
+  const left = document.createElement('div')
+  left.setAttribute('class', 'left flip h')
+  cardControl.appendChild(left)
+  return cardControl
+}
+
+
+
 // placeCard calls drawCard to create a card's svg, which it places
 // in the provided DOM element.
-function placeCard (cardNumber, cardNotes, element) {
-  const cardToPlaceSVG = drawCard(cardNumber, cardNotes)
-  document.getElementById(element).appendChild(cardToPlaceSVG)
+function placeCard (cardNumber, cardNotes, cardId, element) {
+  const cardToPlaceSVG = drawCard(cardNumber, cardNotes, cardId)
+  const cardHolder = document.createElement('div')
+  document.getElementById(element).appendChild(cardHolder)
+  cardHolder.setAttribute('id', cardId)
+  cardHolder.appendChild(addCardControl(cardNumber))
+  cardHolder.appendChild(cardToPlaceSVG)
+  return cardHolder
 }
 // iterate through notes. Use a while loop to process both quarter notes at once.
 // Assign each note or pair of eighth notes to a column
@@ -248,3 +281,11 @@ function placeCard (cardNumber, cardNotes, element) {
 // by looking up a note on the VISUAL_STAFF based on indexOnStaff
 // Send x and y coordinates to the correct note drawing function.
 // Differentiate eighth notes, which need to be sent as a pair.
+
+function replaceCard (cardNumber, cardNotes, cardId, cardHolder) {
+  console.log('parameters: ', cardNumber, cardNotes, cardId, cardHolder)
+  const cardToPlaceSVG = drawCard(cardNumber, cardNotes, cardId)
+  cardHolder.replaceChild(addCardControl(cardNumber), cardHolder.childNodes[0])
+  cardHolder.replaceChild(cardToPlaceSVG, cardHolder.childNodes[1])
+  return cardHolder
+}

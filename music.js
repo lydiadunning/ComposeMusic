@@ -320,7 +320,12 @@ const preview = {
   draw: function () {
     if (this.card) {
       // placeCard is in drawCards.js
-      placeCard(this.card.number, this.card.getNotes(), 'sample')
+      const cardParent = placeCard(
+        this.card.number,
+        this.card.getNotes(),
+        'preview',
+        'sample')
+      controlClickHandler(cardParent)
     }
   },
   play: function () {
@@ -331,7 +336,9 @@ const preview = {
   },
   remove: function (callback = () => {}) {
     const element = document.getElementById('sample')
-    const thisCard = document.getElementById(this.card.number)
+    const thisCard = document.getElementById('preview')
+    // const thisCardControl = document.getElementById('control' + this.card.number)
+
     element.removeChild(thisCard)
     callback()
   },
@@ -356,7 +363,8 @@ const playlist = {
     const number = cardToPlay.numbers
     const notes = cardToPlay.getNotes()
     // placeCard is in drawCards.js
-    placeCard(number, notes, 'display')
+    placeCard(number, notes, this.cardList.length - 1, 'display')
+    this.cardControlListener(this.cardList.length - 1)
   },
   playAll: function () {
     // Concatenates all notes in order into one array.
@@ -370,30 +378,67 @@ const playlist = {
     }
     play(allMusic)
   },
-  getCardElementIds: function () {
-    const cards = document.getElementById('display').children
-    return cards.map(x => x.id)
-  },
-  cardListener: function () {
-    const ids = this.getCardElementIds()
-    for (let i = 0; i < ids.length; i++) {
-      document.getElementById(ids[i]).onclick = () => {
+  cardControlListener: function (listIndex) {
+    const holder = document.getElementById(listIndex.toString())
+    const controller = holder.childNodes[0]
+    const card = this.cardList[listIndex]
+    console.log(controller)
+    console.log(controller.childNodes)
+
+    controller.childNodes.forEach(x => {
+      console.log(x)
+      x.onclick = () => {
+        let directionCode = card.orientation
+        if (x.getAttribute('class').includes('v') && directionCode) {
+          switch (directionCode) {
+            case '1': directionCode = '4'; break
+            case '3': directionCode = '2'; break
+            case '2': directionCode = '3'; break
+            case '4': directionCode = '1'; break
+            default: throw new Error('invalid orientation')
+          }
+        } else if (x.getAttribute('class').includes('h') && directionCode) {
+          switch (directionCode) {
+            case '1': directionCode = '3'; break
+            case '3': directionCode = '1'; break
+            case '2': directionCode = '4'; break
+            case '4': directionCode = '2'; break
+            default: throw new Error('invalid orientation')
+          }
+        } else {
+          console.log('Something has gone wrong with class assignment.')
+          return
+        }
+        const cardNumber = card.firstThreeNumbers + directionCode
+        console.log(cardNumber)
+        // const cardToPlay = Object.create(cardDeck.find(x => x.firstThreeNumbers === card.firstThreeNumbers))
+        // cardToPlay.setOrientation(directionCode)
+        // remove the card from the cardlist
+        this.cardList[listIndex].setOrientation(directionCode)
+        // add the card in its new orientation in place.
+          // add to the cardList
+          // draw the card to the dom
+        console.log(card)
+        replaceCard(cardNumber, card.getNotes(), listIndex, holder)
+        this.cardControlListener(listIndex)
       }
-    }
+    })
+
   },
   remove: function (cardNumber, callback = () => {}) {
-    const element = document.getElementById('display')
+    console.log(cardNumber)
     const thisCard = document.getElementById(cardNumber)
     // console.log(element.children[0])
-    // console.log(thisCard)
+    console.log(thisCard)
     // element.removeChild(thisCard)
     thisCard.remove()
     callback()
   },
   clear: function () {
-    while (this.cardList) {
+    while (this.cardList.length > 0) {
+      console.log(this.cardList)
+      this.remove(this.cardList.length - 1)
       const currentCard = this.cardList.pop()
-      this.remove(currentCard.numbers)
     }
   }
 }
@@ -475,34 +520,37 @@ Array.prototype.forEach.call(cardExamples, function (example) {
 })
 // XXXXXXXXXXXXX
 
-const cardFlippers = document.querySelectorAll('.flip')
-cardFlippers.forEach(x => {
-  x.onclick = () => {
-    let directionCode = numbersInput.value[3]
-    if (x.getAttribute('class').includes('v') && directionCode) {
-      switch (directionCode) {
-        case '1': directionCode = '4'; break
-        case '3': directionCode = '2'; break
-        case '2': directionCode = '3'; break
-        case '4': directionCode = '1'; break
-        default: throw new Error('invalid orientation')
+function controlClickHandler (parentElement) {
+  const control = parentElement.childNodes[0]
+  console.log(control)
+  control.childNodes.forEach(x => {
+    x.onclick = () => {
+      let directionCode = numbersInput.value[3]
+      if (x.getAttribute('class').includes('v') && directionCode) {
+        switch (directionCode) {
+          case '1': directionCode = '4'; break
+          case '3': directionCode = '2'; break
+          case '2': directionCode = '3'; break
+          case '4': directionCode = '1'; break
+          default: throw new Error('invalid orientation')
+        }
+      } else if (x.getAttribute('class').includes('h') && directionCode) {
+        switch (directionCode) {
+          case '1': directionCode = '3'; break
+          case '3': directionCode = '1'; break
+          case '2': directionCode = '4'; break
+          case '4': directionCode = '2'; break
+          default: throw new Error('invalid orientation')
+        }
+      } else {
+        console.log('Something has gone wrong with class assignment.')
+        return
       }
-    } else if (x.getAttribute('class').includes('h') && directionCode) {
-      switch (directionCode) {
-        case '1': directionCode = '3'; break
-        case '3': directionCode = '1'; break
-        case '2': directionCode = '4'; break
-        case '4': directionCode = '2'; break
-        default: throw new Error('invalid orientation')
-      }
-    } else {
-      console.log('Something has gone wrong with class assignment.')
-      return
+      numbersInput.value = numbersInput.value.slice(0, 3) + directionCode
+      numbersInput.dispatchEvent(numberCodeInput)
     }
-    numbersInput.value = numbersInput.value.slice(0, 3) + directionCode
-    numbersInput.dispatchEvent(numberCodeInput)
-  }
-})
+  })
+}
 
 // const saveButton = document.getElementById('save')
 // saveButton.onclick = () => {
