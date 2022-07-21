@@ -47,7 +47,7 @@ function Card (firstThreeNumbers, notes1) {
     this.orientation = orientation
     this.numbers = firstThreeNumbers + orientation
   }
-  this.flipH = function () {
+  this.reverseNotes = function () {
     return this.notes1.slice(0).reverse() // reverse edits this slice, not this.notes1
   }
   // getNotes returns an array of notes formatted as input for drawing an svg image
@@ -57,7 +57,7 @@ function Card (firstThreeNumbers, notes1) {
       case '1': // fallthrough return this.notes1
       case '4': notes = this.notes1; break
       case '2': // fallthrough
-      case '3': notes = this.flipH(); break
+      case '3': notes = this.reverseNotes(); break
     }
     return notes.map(x => ({ note: x.getOnStaff(this.orientation), duration: x.duration }))
   }
@@ -68,9 +68,29 @@ function Card (firstThreeNumbers, notes1) {
       case '1':
       case '4': notes = this.notes1; break
       case '2': // fallthrough
-      case '3': notes = this.flipH(); break
+      case '3': notes = this.reverseNotes(); break
     }
     return notes.map(x => x.getNoteToPlay(this.orientation))
+  }
+  // flipH flips the card horizontally by changing the orientation
+  this.flipH = function () {
+    switch (this.orientation) {
+      case '1': this.orientation = '3'; break
+      case '3': this.orientation = '1'; break
+      case '2': this.orientation = '4'; break
+      case '4': this.orientation = '2'; break
+      default: throw new Error('invalid orientation')
+    }
+  }
+  // flipV flips the card vertically by changing the orientation
+  this.flipV = function () {
+    switch (this.orientation) {
+      case '1': this.orientation = '4'; break
+      case '3': this.orientation = '2'; break
+      case '2': this.orientation = '3'; break
+      case '4': this.orientation = '1'; break
+      default: throw new Error('invalid orientation')
+    }
   }
 }
 
@@ -356,7 +376,12 @@ const preview = {
 const playlist = {
   cardList: [],
   addToCardList: function (cardToPlay) {
-    this.cardList.push(cardToPlay)
+    // the next line instantiates a clone of cardToPlay and adds it to
+    // the playlist.
+    // it uses the prototype design pattern.
+    // a new card object is necessary here so that each card in the list
+    // can be modified without changing any others.
+    this.cardList.push(Object.create(cardToPlay))
     this.drawCard(cardToPlay)
   },
   drawCard: function (cardToPlay) {
@@ -379,47 +404,28 @@ const playlist = {
     play(allMusic)
   },
   cardControlListener: function (listIndex) {
+    console.log(this.cardList)
+
     const holder = document.getElementById(listIndex.toString())
     const controller = holder.childNodes[0]
     const card = this.cardList[listIndex]
-    console.log(controller)
-    console.log(controller.childNodes)
-
     controller.childNodes.forEach(x => {
-      console.log(x)
       x.onclick = () => {
-        let directionCode = card.orientation
-        if (x.getAttribute('class').includes('v') && directionCode) {
-          switch (directionCode) {
-            case '1': directionCode = '4'; break
-            case '3': directionCode = '2'; break
-            case '2': directionCode = '3'; break
-            case '4': directionCode = '1'; break
-            default: throw new Error('invalid orientation')
-          }
-        } else if (x.getAttribute('class').includes('h') && directionCode) {
-          switch (directionCode) {
-            case '1': directionCode = '3'; break
-            case '3': directionCode = '1'; break
-            case '2': directionCode = '4'; break
-            case '4': directionCode = '2'; break
-            default: throw new Error('invalid orientation')
-          }
+        if (x.getAttribute('class').includes('v')) {
+          card.flipV()
+        } else if (x.getAttribute('class').includes('h')) {
+          card.flipH()
         } else {
           console.log('Something has gone wrong with class assignment.')
           return
         }
-        const cardNumber = card.firstThreeNumbers + directionCode
-        console.log(cardNumber)
         // const cardToPlay = Object.create(cardDeck.find(x => x.firstThreeNumbers === card.firstThreeNumbers))
         // cardToPlay.setOrientation(directionCode)
         // remove the card from the cardlist
-        this.cardList[listIndex].setOrientation(directionCode)
         // add the card in its new orientation in place.
           // add to the cardList
           // draw the card to the dom
-        console.log(card)
-        replaceCard(cardNumber, card.getNotes(), listIndex, holder)
+        replaceCard(card.numbers, card.getNotes(), listIndex, holder)
         this.cardControlListener(listIndex)
       }
     })
@@ -453,7 +459,9 @@ function cardPreview (e) {
       const card3digit = input.slice(0, 3)
       // cardToPlay uses the prototype design pattern.
       // it is a new object that clones an existing object.
+      // this does not appear to be necessary here. It is used again in playlist
       const cardToPlay = Object.create(cardDeck.find(x => x.firstThreeNumbers === card3digit))
+
       cardToPlay.setOrientation(cardOrientation)
       preview.create(cardToPlay)
       preview.draw()

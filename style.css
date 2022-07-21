@@ -8,75 +8,96 @@
 */
 
 :root {
-    --outline-color: steelblue;
-    --button-color: lightsteelblue;
-    --background-color: aliceblue;
+    --background-color: #295D8A;
+    --button-color: lightblue;
     --button-outline: #295D8A;
+    --highlight-color: skyblue;
+    --white-color: white;
+    --contrast-color: steelblue;
   }
 
 header {
   text-align: center;
+  grid-area: title;
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  border-color: var(--outline-color);
-  border-width: 3px;
-  border-style: solid;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto 200px auto;
+  grid-template-areas:
+    "title title"
+    "newcard info"
+    "music music";
+  background-color: var(--background-color);
+  padding: 0px 20px;
+  max-width: calc(310px * 4 + 10px);
 }
 
-#controls {
-  background-color: var(--outline-color);
-
+#musicandcontrols {
+  grid-area: music;
+  margin-top: 20px;
+  background-color: var(--contrast-color);
+  border-radius: 10px;
 }
 
-#primary {
-  height: 226px;
-  display: flex;
-  flex-direction: row
-}
 
 .side {
-  background-color: var(--background-color);
-  border-color: var(--outline-color);
+  border-color: var(--contrast-color);
   border-width: 3px;
   border-style: solid;
-  flex: 1;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 #newcard {
+  width: fit-content;
+  grid-area: newcard;
   /* height: 220px; */
-  background-color: var(--background-color);
-  display: flex;
-  flex-direction: row;
-  flex: 2;
+  display: grid;
+  grid-template-columns: 45%, 50%;
+  grid-template-rows: 3em auto 2.2em 2.2em;
+  grid-template-areas:
+    "getcard preview"
+    ". preview"
+    "playcard preview"
+    "addcard preview";
+  grid-row-gap: 1em;
   /* margin-left: 25%;
   margin-right: 25%; */
-  border-color: var(--outline-color);
-  border-width: 3px;
-  border-style: solid;
 }
 
-.accept {
+.getcard {
+  grid-area: getcard;
+  background-color: var(--white-color);
+  border-radius: .5em;
   display: flex;
-  flex-direction: column;
-  height: 220px;
-  width: 40%;
   align-items: center;
-  justify-content: center;
+  padding: 1em;
+  gap: 2em
 }
+
+#playme {
+  grid-area: playcard;
+}
+
+#random {
+  height: 2em;
+}
+
+#addtolist {
+  grid-area: addcard;
+}
+
+
 
 .button {
   background-color: var(--button-color);
-  align-self: stretch;
-  border-color: var(--button-outline);
-  border-width: 3px;
-  border-style: solid;
   font-size: 1rem;
-  padding: 0.3em;
-  border-radius: 0.3em;
-
+  /* padding: 0.6em; */
+  border-radius: 5px;;
+  border: none;
+  height: 2.2em;
 }
 
 #listcontrols .button {
@@ -84,11 +105,10 @@ body {
 }
 
 :hover.button {
-  font-weight: bold;
+  background: var(--highlight-color);
 }
 
 #card-example-deck {
-  width: 100%;
   height: 80%;
   display: flex;
   flex-wrap: wrap;
@@ -96,6 +116,8 @@ body {
   background-color: var(--background-color);
   align-content: space-around;
   justify-content: center;
+  padding: 0.5em;
+  border-radius: 10px;
 }
 
 #example-title {
@@ -106,37 +128,46 @@ body {
 
 .example-card {
   padding: 0.3em;
-  border-bottom: solid 1px var(--button-color);
-  border-right:  solid 1px var(--button-color);
-  border-radius: 2px;
+  border-bottom: solid 1px var(--contrast-color);
+  border-right:  solid 1px var(--contrast-color);
+  border-radius: 5px;
 }
 
 :hover.example-card {
-  background-color: var(--button-color);
+  background-color: var(--contrast-color);
   cursor: default;
   font-weight: bold;
 }
 
 #sample {
-  height: 220px;
-  min-width: 320px;
-  width: 40%;
-  background-color: inherit;
-  margin-left: 50px;
+  height: 200px;
+  width: 300px;
+  /* width: 40%; */
+  background-color: var(--white-color);
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 10px;
 }
 
 #cardnumber {
   width: 2.5em;
   font-size: 1em;
+  border-radius: 5px;
 }
 
 #display {
+  border-radius: 10px;
   /* set width to the highest multiple of 320 that fits in display width */
   display: flex;
   flex-wrap: wrap;
-  min-height: 220px;
+  gap: 10px 10px;
+  min-height: 205px;
+  min-width: 320px;
+  /* max-width: 1230px; */
+  padding: 10px;
   width = 100%
   background-size: cover;
+  background-color: var(--white-color);
   background-image: url(tryStuff.svg)
   /* background-image: url('data:image/svg+xml,\
   <svg height="200">\
@@ -149,11 +180,11 @@ body {
 }
 
 #listcontrols {
-  width: 60%;
-  margin-left: 20%;
-  margin-right: 20%;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
+  align-content: center;
+  padding-top: 0.5em;
+  padding-bottom: 1em;
 }
 
 .number-input {
@@ -161,30 +192,16 @@ body {
 }
 
 
-
-.card {
-  margin: 10px;
-}
-
-.turn-card {
-  position: absolute;
-  opacity: 0;
-  font-size: 3rem;
-  font-weight: bold;
-}
-
-:hover.turn-card {
-  opacity: 30%;
-  color: var(--button-outline);
-}
-
 .card-control > .flip {
   opacity: 50%;
 }
 
+.card-holder {
+  height: 200px;
+}
+
 .card-control {
   position:absolute;
-  margin: 10px;
   width: 300px;
   height: 200px;
   display: grid;
@@ -198,7 +215,7 @@ body {
 
 .card-control > .top {
   grid-area: top;
-  cursor: grab;
+  cursor: pointer;
 }
 
 :hover.top {
@@ -207,7 +224,7 @@ body {
 
 .card-control > .right {
   grid-area: right;
-  cursor: grab;
+  cursor: pointer;
 }
 
 :hover.right {
@@ -216,7 +233,7 @@ body {
 
 .card-control > .bottom {
   grid-area: bottom;
-  cursor: grab;
+  cursor: pointer;
 }
 
 :hover.bottom {
@@ -225,7 +242,7 @@ body {
 
 .card-control > .left {
   grid-area: left;
-  cursor: grab;
+  cursor: pointer;
 }
 
 :hover.left {

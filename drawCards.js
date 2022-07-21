@@ -19,7 +19,7 @@ const STEM_STROKE_WIDTH = '5'
 const X_AXES = [60, 120, 180, 240]
 const X_AXIS_Q_OFFSET = 15
 const X_AXIS_H_OFFSET = 30
-const STEM_LENGTH = 70
+const STEM_LENGTH = 65
 const STEM_ADJUST = 7
 const COLUMNS = ['30', '90', '150', '210', '270']
 const STAFF_LINES = ['40', '70', '100', '130', '160']
@@ -271,6 +271,7 @@ function placeCard (cardNumber, cardNotes, cardId, element) {
   const cardHolder = document.createElement('div')
   document.getElementById(element).appendChild(cardHolder)
   cardHolder.setAttribute('id', cardId)
+  cardHolder.setAttribute('class', 'card-holder')
   cardHolder.appendChild(addCardControl(cardNumber))
   cardHolder.appendChild(cardToPlaceSVG)
   return cardHolder

@@ -17,51 +17,43 @@
       <h1>Make Some Music</h1>
   </header>
 
-  <div id="controls">
-    <div id="primary">
-      <div id="cardlist" class="side">
 
+  <div id="newcard">
+    <div class='getcard'>
+      <div class="number-input">
+        <label for="cardnumber">Number: </label>
+        <input type="text" id="cardnumber" minlength="4" maxlength="4" autofocus>
       </div>
-      <div id="newcard">
-        <div class="accept">
-          <div class="number-input">
-            <label for="cardnumber">Number: </label>
-            <input type="text" id="cardnumber" minlength="4" maxlength="4" autofocus>
-          </div>
-          <button class= "button" type="button" id="playme">Play Preview</button>
-          <button class= "button" type="button" id="random">Random Card</button>
-          <button class="button" type="button" id="addtolist">Add to Composition</button>
-        </div>
-        <div id="sample">
-          <!-- a card appears here -->
-          <!-- <p class="turn-card" id='sample-h'>⤺</p>
-          <p class="turn-card" id='sample-v'>⤻</p>
-          <p class="turn-card" id='sample-v'>⤹</p> -->
-          <!-- <div class='card-control'>
-            <div class="top flip v"></div>
-            <div class="right flip h"></div>
-            <div class="bottom flip v"></div>
-            <div class="left flip h"></div>
-          </div> -->
-        </div>
-      </div>
-      <div id="load" class="hidden side">
-        <h3>Saved Games</h3>
-        <ol>
-          <!-- a list of saved games appears here -->
-        </ol>
-      </div>
+      <button class= "button" type="button" id="random">Random Card</button>
     </div>
+    <button class= "button" type="button" id="playme">Play Preview</button>
+    <button class="button" type="button" id="addtolist">Add to Composition</button>
+    <div id="sample">
+      <!-- a card appears here -->
+    </div>
+  </div>
+  <div id="info">
+    <div id="cardlist" class="side" >
+        <!-- a list of music cards appears here -->
+    </div>
+    <div id="load" class="side" hidden>
+      <h3>Saved Games</h3>
+      <ol>
+        <!-- a list of saved games appears here -->
+      </ol>
+    </div>
+  </div>
+
+
+  <div id="musicandcontrols">
     <div id='listcontrols'>
       <button class="button" type="button" id="playall">Play Composition</button>
       <button class="button" type="button" id="clear">Clear Composition</button>
       <button class="button" type="button" id="save" disabled>Save Composition</button>
     </div>
-  </div>
-
-
-  <div class="musicdisplay" class=bgstaff id="display">
-    <!-- the composition appears here -->
+    <div class="musicdisplay" class=bgstaff id="display">
+      <!-- the composition appears here -->
+    </div>
   </div>
 
 </body>
