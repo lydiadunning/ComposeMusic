@@ -2,6 +2,9 @@
 <head>
     <title>Music</title>
     <link rel="stylesheet" href="./style.css" type="text/css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
     <script defer src="./music.js"></script>
     <script src="./band.js-master/dist/band.min.js"></script>
     <script src="drawCards.js"></script>
@@ -28,15 +31,36 @@
     </div>
     <button class= "button" type="button" id="playme">Play Preview</button>
     <button class="button" type="button" id="addtolist">Add to Composition</button>
-    <div id="sample">
+    <div id="preview">
       <!-- a card appears here -->
+      <div id='preview-card-control' class="card-control hidden">
+        <div class='top flip v'>
+        </div>
+        <div class='right flip h'>
+        </div>
+        <div class='bottom flip v'>
+        </div>
+        <div class='left flip h'>
+        </div>
+      </div>
     </div>
   </div>
   <div id="info">
-    <div id="cardlist" class="side" >
+    <ul>
+      <li tabtarget="#howto" id="how-tab">How To</li>
+      <li tabtarget="#cardlist" id="card-tab" class="active-tab">Cards</li>
+      <li tabtarget="#load" id="load-tab" hidden>Load</li>
+    </ul>
+    <div id="howto" class="side" tab-content>
+      <p>1. Pick a music card to add at random, from the list, or by number.</p>
+      <p>2. Click the card's edges to flip it over.</p>
+      <p>3. Add the card to the composition.</p>
+      <p>4. You can flip or drag the cards in the composition.</p>
+    </div>
+    <div id="cardlist" class="side active" tab-content>
         <!-- a list of music cards appears here -->
     </div>
-    <div id="load" class="side" hidden>
+    <div id="load" class="side" tab-content hidden>
       <h3>Saved Games</h3>
       <ol>
         <!-- a list of saved games appears here -->
@@ -49,7 +73,7 @@
     <div id='listcontrols'>
       <button class="button" type="button" id="playall">Play Composition</button>
       <button class="button" type="button" id="clear">Clear Composition</button>
-      <button class="button" type="button" id="save" disabled>Save Composition</button>
+      <button class="button" type="button" id="save" disabled hidden>Save Composition</button>
     </div>
     <div class="musicdisplay" class=bgstaff id="display">
       <!-- the composition appears here -->

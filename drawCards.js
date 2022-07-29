@@ -12,10 +12,10 @@
 // many constants, to simplify shifts in layout.
 const CARD_WIDTH = '300'
 const CARD_HEIGHT = '200'
-const BLACK_NOTE_RADIUS = '8.5'
+const BLACK_NOTE_RADIUS = '9'
 const HALF_NOTE_RADIUS = '7'
-const CIRCLE_STROKE_WIDTH = '3'
-const STEM_STROKE_WIDTH = '5'
+const CIRCLE_STROKE_WIDTH = '4'
+const STEM_STROKE_WIDTH = '4'
 const X_AXES = [60, 120, 180, 240]
 const X_AXIS_Q_OFFSET = 15
 const X_AXIS_H_OFFSET = 30
@@ -27,8 +27,17 @@ const STAFF_STROKE_WIDTH = '3'
 // the VISUAL_STAFF represents the y axes of notes.
 const VISUAL_STAFF = [160, 145, 130, 115, 100, 85, 70, 55, 40]
 
+function debugDot (x, y) {
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+  circle.setAttribute('cx', x)
+  circle.setAttribute('cy', y)
+  circle.setAttribute('r', '1')
+  circle.setAttribute("fill", 'red')
+  circle.setAttribute("stroke-color", 'red')
+}
+
 // returns the y axis for the top of a note's stem.
-function stemPlace (y, stemUp, change) {
+function stemAdjustY (y, stemUp, change) {
   let y1 = Number(y)
   if (stemUp) {
     y1 -= change
@@ -38,9 +47,14 @@ function stemPlace (y, stemUp, change) {
   return y1.toString()
 }
 
+function stemAdjustX (x) {
+  return (parseFloat(x) + STEM_ADJUST).toString()
+}
+
 function drawStem (x, y, stemUp) {
-  const yStemEnd = stemPlace(y, stemUp, STEM_LENGTH)
-  const yStemStart = stemPlace(y, stemUp, STEM_ADJUST)
+  debugDot(x, y)
+  const yStemEnd = stemAdjustY(y, stemUp, STEM_LENGTH)
+  const yStemStart = stemAdjustY(y, stemUp, 0)
   const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line')
   stem.setAttribute('x1', x)
   stem.setAttribute('x2', x)
@@ -48,12 +62,13 @@ function drawStem (x, y, stemUp) {
   stem.setAttribute('y2', yStemEnd)
   stem.setAttribute('stroke', 'black')
   stem.setAttribute('stroke-width', STEM_STROKE_WIDTH)
-  stem.setAttribute('stroke-linejoin', 'round')
+  stem.setAttribute('stroke-linecap', 'round')
 
   return stem
 }
 
 function drawNotehead (x, y, type) {
+  console.log(y)
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
   circle.setAttribute('cx', x)
   circle.setAttribute('cy', y)
@@ -80,25 +95,28 @@ function drawBeam (x1, x2, y1, y2, yStemEnd1, yStemEnd2) {
 }
 
 function drawEighthNotePair (location1, location2, stemUp) {
-  const yStemEnd1 = stemPlace(location1.y, stemUp, STEM_LENGTH)
-  const yStemEnd2 = stemPlace(location2.y, stemUp, STEM_LENGTH)
+  const yStemEnd1 = stemAdjustY(location1.y, stemUp, STEM_LENGTH)
+  const yStemEnd2 = stemAdjustY(location2.y, stemUp, STEM_LENGTH)
   const x1 = location1.x
   const y1 = location1.y
   const x2 = location2.x
   const y2 = location2.y
   const head1 = drawNotehead(x1, y1, 'eighth')
   const head2 = drawNotehead(x2, y2, 'eighth')
-  const yA1 = stemPlace(location1.y, stemUp, STEM_ADJUST)
-  const yA2 = stemPlace(location2.y, stemUp, STEM_ADJUST)
-  const beam1 = drawBeam(x1, x2, yA1, yA2, yStemEnd1, yStemEnd2)
+  // const yA1 = stemAdjustY(location1.y, stemUp, STEM_ADJUST)
+  // const yA2 = stemAdjustY(location2.y, stemUp, STEM_ADJUST)
+  const beam1 = drawBeam(stemAdjustX(x1), stemAdjustX(x2), y1, y2, yStemEnd1, yStemEnd2)
 
   return [head1, head2, beam1]
 }
 
 function drawHalfOrQuarterNote (location, type, stemUp) {
-  const x = location.x
+  let x = location.x
   const y = location.y
+  console.log(y)
   const notehead = drawNotehead(x, y, type)
+  // moves stem to the side of the note
+  x = stemAdjustX(x)
   const stem = drawStem(x, y, stemUp)
   return [notehead, stem]
 }
@@ -259,6 +277,9 @@ function addCardControl (cardNumber) {
   const left = document.createElement('div')
   left.setAttribute('class', 'left flip h')
   cardControl.appendChild(left)
+  const center = document.createElement('div')
+  center.setAttribute('class', 'center drag')
+  cardControl.appendChild(center)
   return cardControl
 }
 
@@ -268,10 +289,16 @@ function addCardControl (cardNumber) {
 // in the provided DOM element.
 function placeCard (cardNumber, cardNotes, cardId, element) {
   const cardToPlaceSVG = drawCard(cardNumber, cardNotes, cardId)
+  if (cardId == 'preview') {
+    const location = document.getElementById(element)
+    location.appendChild(cardToPlaceSVG)
+    return location
+  }
   const cardHolder = document.createElement('div')
   document.getElementById(element).appendChild(cardHolder)
   cardHolder.setAttribute('id', cardId)
   cardHolder.setAttribute('class', 'card-holder')
+  cardHolder.setAttribute('card-number', cardNumber)
   cardHolder.appendChild(addCardControl(cardNumber))
   cardHolder.appendChild(cardToPlaceSVG)
   return cardHolder
@@ -288,5 +315,6 @@ function replaceCard (cardNumber, cardNotes, cardId, cardHolder) {
   const cardToPlaceSVG = drawCard(cardNumber, cardNotes, cardId)
   cardHolder.replaceChild(addCardControl(cardNumber), cardHolder.childNodes[0])
   cardHolder.replaceChild(cardToPlaceSVG, cardHolder.childNodes[1])
+  cardHolder.setAttribute('card-number', cardNumber)
   return cardHolder
 }

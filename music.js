@@ -284,20 +284,13 @@ const cardDeck = [
 // displays all newly created cards
 function showAllNewCards () {
   const cardDisplay = document.getElementById('cardlist')
-  const title = document.createElement('h1')
-  title.append('Music Cards')
-  title.setAttribute('id', 'example-title')
-  cardDisplay.append(title)
-  const cardExampleDeck = document.createElement('div')
-  cardExampleDeck.setAttribute('id', 'card-example-deck')
-  const exampleDeck = cardDisplay.appendChild(cardExampleDeck)
   newCards.forEach(card => {
     const cardNumber = card.firstThreeNumbers + '1'
     const cardLink = document.createElement('div')
     cardLink.setAttribute('id', cardNumber + '-example')
     cardLink.setAttribute('class', 'example-card')
     cardLink.append(cardNumber)
-    exampleDeck.append(cardLink)
+    cardDisplay.append(cardLink)
   })
   return document.getElementsByClassName('example-card')
 }
@@ -332,20 +325,25 @@ function checkIfCard (cardInput) {
 
 // the preview object displays preview cards and plays their music.
 const preview = {
+  element: document.getElementById('preview'),
+  control: document.getElementById('preview-card-control'),
   // The preview class has no attributes when it is created.
   create: function (card) {
     // the create function creates a preview, defining its attributes
     this.card = card
   },
   draw: function () {
+    console.log('in draw function')
+
     if (this.card) {
       // placeCard is in drawCards.js
       const cardParent = placeCard(
         this.card.number,
         this.card.getNotes(),
         'preview',
-        'sample')
-      controlClickHandler(cardParent)
+        'preview')
+      this.control.classList.remove('hidden')
+      controlClickHandler(this.control)
     }
   },
   play: function () {
@@ -355,11 +353,8 @@ const preview = {
     }
   },
   remove: function (callback = () => {}) {
-    const element = document.getElementById('sample')
-    const thisCard = document.getElementById('preview')
-    // const thisCardControl = document.getElementById('control' + this.card.number)
-
-    element.removeChild(thisCard)
+    this.element.removeChild(this.element.children[1])
+    this.control.classList.add('hidden')
     callback()
   },
   clear: function () {
@@ -371,6 +366,62 @@ const preview = {
   }
 }
 
+
+
+// XXXXXXXXXXXXX- Drag and Drop Functionality -XXXXXXXXXXXXXXXXXXXXXX
+
+
+function moveCard (oldIndex, newIndex) {
+  const itemToMove = playlist.cardList.splice(oldIndex, 1)[0]
+  playlist.cardList.splice(newIndex, 0, itemToMove)
+}
+
+function moveCardDiv (dragNode, dropNode, display) {
+  //https://stackoverflow.com/questions/5913927/get-child-node-index
+  const oldIndex = Array.prototype.indexOf.call(display.children, dragNode)
+  const newIndex = Array.prototype.indexOf.call(display.children, dropNode);
+  display.removeChild(dragNode)
+  if (display.children.length == newIndex) {
+    display.appendChild(dragNode)
+  } else {
+    display.insertBefore(dragNode, display.children[newIndex])
+  }
+  return [oldIndex, newIndex]
+}
+
+function dragItem (dragged, dropSpot) {
+  const display = document.getElementById('display')
+  const indexes = moveCardDiv(dragged, dropSpot, display)
+  moveCard(indexes[0], indexes[1])
+}
+
+let start
+function dragStart () {
+  start = this.parentElement.parentElement
+  // console.log("Event:", 'dragStart');
+}
+
+function dragOver (e) {
+  // console.log("Event:", 'dragover');
+  e.preventDefault()
+}
+function dragDrop (e) {
+  // console.log("Event:", dragDrop)
+  const holder = this.parentElement.parentElement
+  dragItem(start, holder);
+}
+
+
+function addEventListeners (centerNode) {
+  centerNode.addEventListener('dragstart', dragStart);
+  centerNode.addEventListener('dragover', dragOver);
+  centerNode.addEventListener('drop', dragDrop);
+}
+
+// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
 // playlist controls the list of cards placed by the user, and the
 // music from those cards.
 const playlist = {
@@ -381,6 +432,9 @@ const playlist = {
     // it uses the prototype design pattern.
     // a new card object is necessary here so that each card in the list
     // can be modified without changing any others.
+    if (!cardToPlay) {
+      console.log('cardToPlay undefined')
+    }
     this.cardList.push(Object.create(cardToPlay))
     this.drawCard(cardToPlay)
   },
@@ -404,30 +458,34 @@ const playlist = {
     play(allMusic)
   },
   cardControlListener: function (listIndex) {
-    console.log(this.cardList)
+    console.log('cardControlListener', this.cardList)
 
     const holder = document.getElementById(listIndex.toString())
     const controller = holder.childNodes[0]
     const card = this.cardList[listIndex]
+    console.log('controller children: ', controller.childNodes)
     controller.childNodes.forEach(x => {
-      x.onclick = () => {
-        if (x.getAttribute('class').includes('v')) {
-          card.flipV()
-        } else if (x.getAttribute('class').includes('h')) {
-          card.flipH()
-        } else {
-          console.log('Something has gone wrong with class assignment.')
-          return
+      console.log("childNode: ", x)
+      if (x.getAttribute('class').includes('drag')) {
+        console.log('attributes include drag, assigning event listeners')
+        addEventListeners(x)
+      } else {
+        // x.removeEventHandler('click')
+        x.onclick = () => {
+          console.log("clicked: ", x)
+          if (x.getAttribute('class').includes('v')) {
+            card.flipV()
+          } else if (x.getAttribute('class').includes('h')) {
+            card.flipH()
+          } else {
+            console.log('Something has gone wrong with class assignment.')
+            return
+          }
+          replaceCard(card.numbers, card.getNotes(), listIndex, holder)
+          this.cardControlListener(listIndex)
         }
-        // const cardToPlay = Object.create(cardDeck.find(x => x.firstThreeNumbers === card.firstThreeNumbers))
-        // cardToPlay.setOrientation(directionCode)
-        // remove the card from the cardlist
-        // add the card in its new orientation in place.
-          // add to the cardList
-          // draw the card to the dom
-        replaceCard(card.numbers, card.getNotes(), listIndex, holder)
-        this.cardControlListener(listIndex)
       }
+
     })
 
   },
@@ -435,7 +493,7 @@ const playlist = {
     console.log(cardNumber)
     const thisCard = document.getElementById(cardNumber)
     // console.log(element.children[0])
-    console.log(thisCard)
+    // console.log(thisCard.)
     // element.removeChild(thisCard)
     thisCard.remove()
     callback()
@@ -528,10 +586,10 @@ Array.prototype.forEach.call(cardExamples, function (example) {
 })
 // XXXXXXXXXXXXX
 
-function controlClickHandler (parentElement) {
-  const control = parentElement.childNodes[0]
-  console.log(control)
-  control.childNodes.forEach(x => {
+function controlClickHandler (controlElement) {
+  // Array.from used to make the HTMLCollection returned
+  // by controleElement.children iterable.
+  Array.from(controlElement.children).forEach(x => {
     x.onclick = () => {
       let directionCode = numbersInput.value[3]
       if (x.getAttribute('class').includes('v') && directionCode) {
@@ -559,6 +617,22 @@ function controlClickHandler (parentElement) {
     }
   })
 }
+
+function tabHandler () {
+  const targetElement = document.querySelector(this.getAttribute('tabtarget'))
+  const formerTabElement = document.querySelector('.active-tab')
+  const formerTargetElement = document.querySelector(formerTabElement.getAttribute('tabtarget'))
+  formerTabElement.classList.remove('active-tab')
+  this.classList.add('active-tab')
+  formerTargetElement.classList.remove('active')
+  targetElement.classList.add('active')
+  formerTargetElement.classList.add('hidden')
+  targetElement.classList.remove('hidden')
+}
+
+document.getElementById('card-tab').addEventListener('click', tabHandler)
+document.getElementById('how-tab').addEventListener('click', tabHandler)
+
 
 // const saveButton = document.getElementById('save')
 // saveButton.onclick = () => {
