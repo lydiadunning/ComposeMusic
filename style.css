@@ -171,19 +171,19 @@ body {
   /* overflow: auto; */
 }
 
-.example-card {
+/* .example-card {
   padding: 0.3em;
   border-bottom: solid 1px var(--contrast-color);
   border-right:  solid 1px var(--contrast-color);
   border-radius: 5px;
   color: var(--white-color);
-}
+} */
 
-:hover.example-card {
+/* :hover.example-card {
   background-color: var(--contrast-color);
   cursor: default;
   font-weight: bold;
-}
+} */
 
 #preview {
   height: var(--card-height);
@@ -192,13 +192,13 @@ body {
   border-radius: 10px;
 }
 
-#cardnumber {
+/* #cardnumber {
   width: 2.3em;
   font-size: 1em;
   border-radius: 5px;
-}
+} */
 
-#display {
+#phrase {
   border-radius: 10px;
   display: flex;
   flex-wrap: wrap;
@@ -328,11 +328,16 @@ li.active-tab {
 } */
 
 #cardlist {
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  /* flex-wrap: wrap; */
   gap: 0.5em;
   align-content: space-around;
   justify-content: left;
+  overflow: scroll;
+}
+
+#example-card {
+  width: 100px;
 }
 
 #howto {
@@ -356,4 +361,8 @@ p {
 
 .hidden > * {
   display: none;
+}
+
+.temp {
+  background-color: var(--contrast-color);
 }

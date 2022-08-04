@@ -39,7 +39,7 @@ function MyNote (onStaff, duration = 'quarter') {
 // as well as an array of notes objects for the card as they appear in orientation 1.
 // the card has two other essential attributes, number and orientation. the orientation
 // is set based on user input, and the number adds the orientation to the three number code.
-function Card (firstThreeNumbers, notes1) {
+function Measure (firstThreeNumbers, notes1) {
   // all of the numbers mentioned here are strings of numbers used as reference codes. rename?
   this.firstThreeNumbers = firstThreeNumbers
   this.notes1 = notes1 // array of the notes in orientation 1
@@ -94,206 +94,43 @@ function Card (firstThreeNumbers, notes1) {
   }
 }
 
-const newCards = [new Card('400', [new MyNote(2, 'half'), new MyNote(6, 'quarter'), new MyNote(5, 'quarter')]),
-            new Card('401', [new MyNote(5, 'half'), new MyNote(4, 'quarter'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth')]),
-            new Card('402', [new MyNote(6, 'quarter'), new MyNote(2, 'quarter'), new MyNote(3, 'half')]),
-            new Card('405', [new MyNote(4, 'quarter'), new MyNote(1, 'quarter'), new MyNote(6, 'half')]),
-            new Card('406', [new MyNote(2, 'quarter'), new MyNote(1, 'half'), new MyNote(4, 'eighth'), new MyNote(6, 'eighth')]),
-            new Card('408', [new MyNote(4, 'half'), new MyNote(4, 'quarter'), new MyNote(5, 'quarter')]),
-            new Card('409', [new MyNote(5, 'eighth'), new MyNote(1, 'eighth'), new MyNote(5, 'half'), new MyNote(3, 'quarter')]),
-            new Card('410', [new MyNote(5, 'quarter'), new MyNote(4, 'eighth'), new MyNote(6, 'eighth'), new MyNote(6, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth')]),
-            new Card('411', [new MyNote(5, 'eighth'), new MyNote(3, 'eighth'), new MyNote(5, 'half'), new MyNote(5, 'quarter')]),
-            new Card('412', [new MyNote(4, 'half'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(5, 'eighth')]),
-            new Card('413', [new MyNote(1, 'quarter'), new MyNote(4, 'half'), new MyNote(2, 'quarter')]),
-            new Card('414', [new MyNote(2, 'quarter'), new MyNote(1, 'half'), new MyNote(6, 'eighth'), new MyNote(2, 'eighth')]),
-            new Card('415', [new MyNote(1, 'half'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth')]),
-            new Card('416', [new MyNote(1, 'half'), new MyNote(1, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth')]),
-            new Card('417', [new MyNote(3, 'quarter'), new MyNote(1, 'quarter'), new MyNote(1, 'half')]),
-            new Card('418', [new MyNote(6, 'quarter'), new MyNote(4, 'quarter'), new MyNote(2, 'quarter'), new MyNote(3, 'quarter')]),
-            new Card('419', [new MyNote(4, 'quarter'), new MyNote(3, 'quarter'), new MyNote(3, 'half')]),
-            new Card('420', [new MyNote(4, 'half'), new MyNote(5, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth')]),
-            new Card('421', [new MyNote(3, 'eighth'), new MyNote(2, 'eighth'), new MyNote(1, 'quarter'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(5, 'quarter')]),
-            new Card('423', [new MyNote(5, 'eighth'), new MyNote(5, 'eighth'), new MyNote(2, 'quarter'), new MyNote(6, 'half')]),
-            new Card('424', [new MyNote(4, 'quarter'), new MyNote(3, 'half'), new MyNote(1, 'eighth'), new MyNote(1, 'eighth')]),
-            new Card('427', [new MyNote(2, 'quarter'), new MyNote(5, 'quarter'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(6, 'eighth')]),
-            new Card('428', [new MyNote(5, 'eighth'), new MyNote(6, 'eighth'), new MyNote(5, 'half'), new MyNote(5, 'quarter')]),
-            new Card('429', [new MyNote(2, 'eighth'), new MyNote(6, 'eighth'), new MyNote(3, 'half'), new MyNote(5, 'eighth'), new MyNote(3, 'eighth')]),
-            new Card('430', [new MyNote(6, 'quarter'), new MyNote(6, 'eighth'), new MyNote(4, 'eighth'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth')]),
-            new Card('431', [new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(2, 'eighth'), new MyNote(1, 'half')]),
-            new Card('432', [new MyNote(1, 'quarter'), new MyNote(6, 'quarter'), new MyNote(1, 'eighth'), new MyNote(5, 'eighth'), new MyNote(2, 'eighth'), new MyNote(4, 'eighth')]),
-            new Card('433', [new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth'), new MyNote(5, 'eighth'), new MyNote(6, 'half')]),
-            new Card('437', [new MyNote(5, 'half'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth')]),
-            new Card('438', [new MyNote(3, 'half'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth'), new MyNote(6, 'quarter')]),
-            new Card('439', [new MyNote(3, 'quarter'), new MyNote(5, 'quarter'), new MyNote(1, 'eighth'), new MyNote(1, 'eighth'), new MyNote(5, 'quarter')]),
-            new Card('441', [new MyNote(2, 'eighth'), new MyNote(1, 'eighth'), new MyNote(2, 'half'), new MyNote(2, 'eighth'), new MyNote(6, 'eighth')]),
+const cardDeck = [new Measure('400', [new MyNote(2, 'half'), new MyNote(6, 'quarter'), new MyNote(5, 'quarter')]),
+            new Measure('401', [new MyNote(5, 'half'), new MyNote(4, 'quarter'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth')]),
+            new Measure('402', [new MyNote(6, 'quarter'), new MyNote(2, 'quarter'), new MyNote(3, 'half')]),
+            new Measure('405', [new MyNote(4, 'quarter'), new MyNote(1, 'quarter'), new MyNote(6, 'half')]),
+            new Measure('406', [new MyNote(2, 'quarter'), new MyNote(1, 'half'), new MyNote(4, 'eighth'), new MyNote(6, 'eighth')]),
+            new Measure('408', [new MyNote(4, 'half'), new MyNote(4, 'quarter'), new MyNote(5, 'quarter')]),
+            new Measure('409', [new MyNote(5, 'eighth'), new MyNote(1, 'eighth'), new MyNote(5, 'half'), new MyNote(3, 'quarter')]),
+            new Measure('410', [new MyNote(5, 'quarter'), new MyNote(4, 'eighth'), new MyNote(6, 'eighth'), new MyNote(6, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth')]),
+            new Measure('411', [new MyNote(5, 'eighth'), new MyNote(3, 'eighth'), new MyNote(5, 'half'), new MyNote(5, 'quarter')]),
+            new Measure('412', [new MyNote(4, 'half'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(5, 'eighth')]),
+            new Measure('413', [new MyNote(1, 'quarter'), new MyNote(4, 'half'), new MyNote(2, 'quarter')]),
+            new Measure('414', [new MyNote(2, 'quarter'), new MyNote(1, 'half'), new MyNote(6, 'eighth'), new MyNote(2, 'eighth')]),
+            new Measure('415', [new MyNote(1, 'half'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth')]),
+            new Measure('416', [new MyNote(1, 'half'), new MyNote(1, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth')]),
+            new Measure('417', [new MyNote(3, 'quarter'), new MyNote(1, 'quarter'), new MyNote(1, 'half')]),
+            new Measure('418', [new MyNote(6, 'quarter'), new MyNote(4, 'quarter'), new MyNote(2, 'quarter'), new MyNote(3, 'quarter')]),
+            new Measure('419', [new MyNote(4, 'quarter'), new MyNote(3, 'quarter'), new MyNote(3, 'half')]),
+            new Measure('420', [new MyNote(4, 'half'), new MyNote(5, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(4, 'eighth')]),
+            new Measure('421', [new MyNote(3, 'eighth'), new MyNote(2, 'eighth'), new MyNote(1, 'quarter'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(5, 'quarter')]),
+            new Measure('423', [new MyNote(5, 'eighth'), new MyNote(5, 'eighth'), new MyNote(2, 'quarter'), new MyNote(6, 'half')]),
+            new Measure('424', [new MyNote(4, 'quarter'), new MyNote(3, 'half'), new MyNote(1, 'eighth'), new MyNote(1, 'eighth')]),
+            new Measure('427', [new MyNote(2, 'quarter'), new MyNote(5, 'quarter'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(6, 'eighth')]),
+            new Measure('428', [new MyNote(5, 'eighth'), new MyNote(6, 'eighth'), new MyNote(5, 'half'), new MyNote(5, 'quarter')]),
+            new Measure('429', [new MyNote(2, 'eighth'), new MyNote(6, 'eighth'), new MyNote(3, 'half'), new MyNote(5, 'eighth'), new MyNote(3, 'eighth')]),
+            new Measure('430', [new MyNote(6, 'quarter'), new MyNote(6, 'eighth'), new MyNote(4, 'eighth'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth')]),
+            new Measure('431', [new MyNote(3, 'eighth'), new MyNote(4, 'eighth'), new MyNote(3, 'eighth'), new MyNote(2, 'eighth'), new MyNote(1, 'half')]),
+            new Measure('432', [new MyNote(1, 'quarter'), new MyNote(6, 'quarter'), new MyNote(1, 'eighth'), new MyNote(5, 'eighth'), new MyNote(2, 'eighth'), new MyNote(4, 'eighth')]),
+            new Measure('433', [new MyNote(4, 'eighth'), new MyNote(1, 'eighth'), new MyNote(4, 'eighth'), new MyNote(5, 'eighth'), new MyNote(6, 'half')]),
+            new Measure('437', [new MyNote(5, 'half'), new MyNote(2, 'quarter'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth')]),
+            new Measure('438', [new MyNote(3, 'half'), new MyNote(1, 'eighth'), new MyNote(2, 'eighth'), new MyNote(6, 'quarter')]),
+            new Measure('439', [new MyNote(3, 'quarter'), new MyNote(5, 'quarter'), new MyNote(1, 'eighth'), new MyNote(1, 'eighth'), new MyNote(5, 'quarter')]),
+            new Measure('441', [new MyNote(2, 'eighth'), new MyNote(1, 'eighth'), new MyNote(2, 'half'), new MyNote(2, 'eighth'), new MyNote(6, 'eighth')]),
 ]
 
 
-const cardDeck = [
-  new Card('001', [
-    new MyNote(4),
-    new MyNote(6, 'half'),
-    new MyNote(4)
-  ]),
-  new Card('002', [
-    new MyNote(2),
-    new MyNote(6, 'eighth'),
-    new MyNote(5, 'eighth'),
-    new MyNote(4),
-    new MyNote(2)
-  ]),
-  new Card('003', [
-    new MyNote(4),
-    new MyNote(3, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(2)
-  ]),
-  new Card('004', [
-    new MyNote(4, 'eighth'),
-    new MyNote(5, 'eighth'),
-    new MyNote(6, 'half'),
-    new MyNote(5, 'eighth'),
-    new MyNote(4, 'eighth')
-  ]),
-  new Card('005', [
-    new MyNote(3, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(5, 'half'),
-    new MyNote(4)
-  ]),
-  new Card('006', [
-    new MyNote(2, 'eighth'),
-    new MyNote(6, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(2, 'eighth'),
-    new MyNote(2, 'half')
-  ]),
-  new Card('007', [
-    new MyNote(2),
-    new MyNote(3),
-    new MyNote(4),
-    new MyNote(2)
-  ]),
-  new Card('008', [
-    new MyNote(2),
-    new MyNote(6),
-    new MyNote(5, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(3)
-  ]),
-  new Card('009', [
-    new MyNote(3),
-    new MyNote(5),
-    new MyNote(4, 'eighth'),
-    new MyNote(5, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(2, 'eighth')
-  ]),
-  new Card('010', [
-    new MyNote(4, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(5),
-    new MyNote(4)
-  ]),
-  new Card('011', [
-    new MyNote(2, 'eighth'),
-    new MyNote(6, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(2, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(5, 'eighth'),
-    new MyNote(4)
-  ]),
-  new Card('012', [
-    new MyNote(3, 'half'),
-    new MyNote(5, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(2, 'eighth')
-  ]),
-  new Card('013', [
-    new MyNote(2, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(6, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(2, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(4)
-  ]),
-  new Card('014', [
-    new MyNote(4),
-    new MyNote(2, 'half'),
-    new MyNote(5)
-  ]),
-  new Card('015', [
-    new MyNote(4),
-    new MyNote(4, 'eighth'),
-    new MyNote(5, 'eighth'),
-    new MyNote(4),
-    new MyNote(4, 'eighth'),
-    new MyNote(2, 'eighth')
-  ]),
-  new Card('016', [
-    new MyNote(4, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(2),
-    new MyNote(3),
-    new MyNote(2)
-  ]),
-  new Card('017', [
-    new MyNote(5),
-    new MyNote(4, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(4),
-    new MyNote(2)
-  ]),
-  new Card('018', [
-    new MyNote(5, 'half'),
-    new MyNote(2),
-    new MyNote(5)
-  ]),
-  new Card('019', [
-    new MyNote(4, 'eighth'),
-    new MyNote(6, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(6, 'eighth'),
-    new MyNote(4, 'eighth'),
-    new MyNote(2, 'eighth'),
-    new MyNote(4)
-  ]),
-  new Card('025', [
-    new MyNote(6),
-    new MyNote(5, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(2, 'eighth'),
-    new MyNote(3, 'eighth'),
-    new MyNote(1)
-  ]),
-  new Card('030', [
-    new MyNote(5),
-    new MyNote(2),
-    new MyNote(1, 'half')
-  ])
-].concat(newCards)
 
 
-// displays all newly created cards
-function showAllNewCards () {
-  const cardDisplay = document.getElementById('cardlist')
-  newCards.forEach(card => {
-    const cardNumber = card.firstThreeNumbers + '1'
-    const cardLink = document.createElement('div')
-    cardLink.setAttribute('id', cardNumber + '-example')
-    cardLink.setAttribute('class', 'example-card')
-    cardLink.append(cardNumber)
-    cardDisplay.append(cardLink)
-  })
-  return document.getElementsByClassName('example-card')
-}
 
 
 
@@ -315,13 +152,39 @@ function play (notes /*, callback = () => {} */) {
   // conductor.setOnFinishedCallback(callback)
 }
 
-function checkIfCard (cardInput) {
+function checkIfMeasure (cardInput) {
   const firstThree = cardInput.slice(0, 3)
   const fourth = cardInput[3]
   return (cardDeck.some(card => card.firstThreeNumbers === firstThree)) &&
          (1 <= fourth && fourth <= 4) &&
          (cardInput.length === 4)
 }
+
+
+// displays all newly created cards
+function showAllMeasures () {
+  const cardDisplay = document.getElementById('cardlist')
+  let i = 0
+
+  cardDeck.forEach(card => {
+    const cardNumber = card.firstThreeNumbers + '1'
+    card.setOrientation('1')
+    const cardLink = document.createElement('div')
+    const newId = cardNumber + '-example'
+    cardLink.setAttribute('id', newId)
+    cardLink.setAttribute('class', 'example-card')
+    cardLink.setAttribute('draggable', 'true')
+    cardDisplay.append(cardLink)
+    placeCard(cardNumber, card.getNotes(), i, newId)
+    cardLink.addEventListener('dragstart', exampleDragStart);
+    cardLink.addEventListener('dragover', dragOver);
+    // console.log('event listeners added')
+    i++
+ })
+  return document.getElementsByClassName('example-card')
+}
+
+
 
 // the preview object displays preview cards and plays their music.
 const preview = {
@@ -333,7 +196,7 @@ const preview = {
     this.card = card
   },
   draw: function () {
-    console.log('in draw function')
+    // console.log('in draw function')
 
     if (this.card) {
       // placeCard is in drawCards.js
@@ -372,26 +235,29 @@ const preview = {
 
 
 function moveCard (oldIndex, newIndex) {
+  // console.log('moveCard')
   const itemToMove = playlist.cardList.splice(oldIndex, 1)[0]
   playlist.cardList.splice(newIndex, 0, itemToMove)
 }
 
-function moveCardDiv (dragNode, dropNode, display) {
+function moveCardDiv (dragNode, dropNode, phrase) {
+  // console.log('moveCardDiv')
   //https://stackoverflow.com/questions/5913927/get-child-node-index
-  const oldIndex = Array.prototype.indexOf.call(display.children, dragNode)
-  const newIndex = Array.prototype.indexOf.call(display.children, dropNode);
-  display.removeChild(dragNode)
-  if (display.children.length == newIndex) {
-    display.appendChild(dragNode)
+  const oldIndex = Array.prototype.indexOf.call(phrase.children, dragNode)
+  const newIndex = Array.prototype.indexOf.call(phrase.children, dropNode);
+  phrase.removeChild(dragNode)
+  if (phrase.children.length == newIndex) {
+    phrase.appendChild(dragNode)
   } else {
-    display.insertBefore(dragNode, display.children[newIndex])
+    phrase.insertBefore(dragNode, phrase.children[newIndex])
   }
   return [oldIndex, newIndex]
 }
 
-function dragItem (dragged, dropSpot) {
-  const display = document.getElementById('display')
-  const indexes = moveCardDiv(dragged, dropSpot, display)
+function dragCardInPhrase (dragged, dropSpot) {
+  // console.log('dragCardInPhrase')
+  const phrase = document.getElementById('phrase')
+  const indexes = moveCardDiv(dragged, dropSpot, phrase)
   moveCard(indexes[0], indexes[1])
 }
 
@@ -405,10 +271,32 @@ function dragOver (e) {
   // console.log("Event:", 'dragover');
   e.preventDefault()
 }
+
+function insertDraggedCard (target) {
+  // console.log("insertCard")
+  const phrase = document.getElementById('phrase')
+  const newIndex = Array.prototype.indexOf.call(phrase.children, target)
+  const newCardNumber = start.dataset.cardnumber
+  const newCard = getCardFromNumber(newCardNumber)
+  const notes = newCard.getNotes()
+  const cardInDom = insertCard (newCardNumber, notes, target, phrase)
+  playlist.cardList.splice(newIndex, 0, newCard)
+  playlist.cardControlListener(cardInDom)
+}
+
+
+
 function dragDrop (e) {
-  // console.log("Event:", dragDrop)
-  const holder = this.parentElement.parentElement
-  dragItem(start, holder);
+  console.log("Event:", 'dragDrop')
+  console.log(start)
+  if (start.dataset.cardtype == 'inphrase') {
+    const holder = this.parentElement.parentElement
+    dragCardInPhrase(start, holder);
+  } else if (start.dataset.cardtype == 'example') {
+    insertDraggedCard(this.parentElement.parentElement)
+  } else {
+    console.log('Unexpected cardtype')
+  }
 }
 
 
@@ -420,7 +308,42 @@ function addEventListeners (centerNode) {
 
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+// XXXXXXXXXXX Drag and drop from example menu XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+
+function getCardFromNumber (fourDigitNumber) {
+  const firstThree = fourDigitNumber.slice(0,3)
+  // console.log("first three: ", firstThree)
+  const card = Object.create(cardDeck.find(x => x.firstThreeNumbers === firstThree))
+  card.setOrientation(fourDigitNumber.slice(3))
+  return card
+}
+
+
+function exampleDragStart () {
+  start = this
+  // console.log("Event:", 'dragStart')
+  console.log(this.dataset.cardnumber)
+}
+
+function dropOnPhrase (e) {
+  console.log("Event:", 'dropOnPhrase')
+  console.log(start)
+  // console.log('phrase: ', phrase)
+  if (start.dataset.cardtype == 'example' && e.target == e.currentTarget) {
+    playlist.addToCardList(getCardFromNumber(start.dataset.cardnumber))
+  } else {
+    console.log('Unexpected cardtype')
+  }
+}
+
+
+const phrase = document.getElementById('phrase')
+phrase.addEventListener('drop', dropOnPhrase)
+phrase.addEventListener('dragover', dragOver)
+
+
+// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 // playlist controls the list of cards placed by the user, and the
 // music from those cards.
@@ -429,21 +352,23 @@ const playlist = {
   addToCardList: function (cardToPlay) {
     // the next line instantiates a clone of cardToPlay and adds it to
     // the playlist.
-    // it uses the prototype design pattern.
+    // it uses the prototype design pattern. (wait. does it? Or does it use a new instance?)
     // a new card object is necessary here so that each card in the list
     // can be modified without changing any others.
     if (!cardToPlay) {
       console.log('cardToPlay undefined')
     }
-    this.cardList.push(Object.create(cardToPlay))
+    this.cardList.push(cardToPlay)
+    // this.cardList.push(Object.create(cardToPlay))
+
     this.drawCard(cardToPlay)
   },
   drawCard: function (cardToPlay) {
     const number = cardToPlay.numbers
     const notes = cardToPlay.getNotes()
     // placeCard is in drawCards.js
-    placeCard(number, notes, this.cardList.length - 1, 'display')
-    this.cardControlListener(this.cardList.length - 1)
+    const cardInDom = placeCard(number, notes, this.cardList.length - 1, 'phrase')
+    this.cardControlListener(cardInDom)
   },
   playAll: function () {
     // Concatenates all notes in order into one array.
@@ -457,22 +382,20 @@ const playlist = {
     }
     play(allMusic)
   },
-  cardControlListener: function (listIndex) {
-    console.log('cardControlListener', this.cardList)
-
-    const holder = document.getElementById(listIndex.toString())
-    const controller = holder.childNodes[0]
-    const card = this.cardList[listIndex]
-    console.log('controller children: ', controller.childNodes)
+  cardControlListener: function (cardInDom) {
+    console.log('cardControlListener')
+    const controller = cardInDom.childNodes[0]
+    const card = this.cardList[Array.prototype.indexOf.call(cardInDom.parentNode.children, cardInDom)]
+    // console.log('controller children: ', controller.childNodes)
     controller.childNodes.forEach(x => {
-      console.log("childNode: ", x)
+      // console.log("childNode: ", x)
       if (x.getAttribute('class').includes('drag')) {
-        console.log('attributes include drag, assigning event listeners')
+        // console.log('attributes include drag, assigning event listeners')
         addEventListeners(x)
       } else {
         // x.removeEventHandler('click')
         x.onclick = () => {
-          console.log("clicked: ", x)
+          // console.log("clicked: ", x)
           if (x.getAttribute('class').includes('v')) {
             card.flipV()
           } else if (x.getAttribute('class').includes('h')) {
@@ -485,12 +408,10 @@ const playlist = {
           this.cardControlListener(listIndex)
         }
       }
-
     })
-
   },
   remove: function (cardNumber, callback = () => {}) {
-    console.log(cardNumber)
+    // console.log(cardNumber)
     const thisCard = document.getElementById(cardNumber)
     // console.log(element.children[0])
     // console.log(thisCard.)
@@ -500,7 +421,7 @@ const playlist = {
   },
   clear: function () {
     while (this.cardList.length > 0) {
-      console.log(this.cardList)
+      // console.log(this.cardList)
       this.remove(this.cardList.length - 1)
       const currentCard = this.cardList.pop()
     }
@@ -512,7 +433,7 @@ function cardPreview (e) {
   preview.clear()
   const input = e.target.value
   if (input.length === 4) {
-    if (checkIfCard(input)) {
+    if (checkIfMeasure(input)) {
       const cardOrientation = input[3]
       const card3digit = input.slice(0, 3)
       // cardToPlay uses the prototype design pattern.
@@ -570,14 +491,14 @@ playAllButton.onclick = () => {
 
 const randomButton = document.getElementById('random')
 randomButton.onclick = () => {
-  const randomCard = newCards[Math.floor(Math.random() * newCards.length)]
+  const randomCard = cardDeck[Math.floor(Math.random() * cardDeck.length)]
   const randomFinal = Math.floor(Math.random() * 4) + 1
   numbersInput.value = randomCard.firstThreeNumbers + randomFinal.toString()
   numbersInput.dispatchEvent(numberCodeInput)
 }
 
 // XXXXXXXXXXXXX
-const cardExamples = showAllNewCards()
+const cardExamples = showAllMeasures()
 Array.prototype.forEach.call(cardExamples, function (example) {
   example.onclick = () => {
     numbersInput.value = example.id.slice(0, 4)
@@ -630,8 +551,8 @@ function tabHandler () {
   targetElement.classList.remove('hidden')
 }
 
-document.getElementById('card-tab').addEventListener('click', tabHandler)
-document.getElementById('how-tab').addEventListener('click', tabHandler)
+// document.getElementById('card-tab').addEventListener('click', tabHandler)
+// document.getElementById('how-tab').addEventListener('click', tabHandler)
 
 
 // const saveButton = document.getElementById('save')

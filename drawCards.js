@@ -68,7 +68,7 @@ function drawStem (x, y, stemUp) {
 }
 
 function drawNotehead (x, y, type) {
-  console.log(y)
+  // console.log(y)
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
   circle.setAttribute('cx', x)
   circle.setAttribute('cy', y)
@@ -113,7 +113,7 @@ function drawEighthNotePair (location1, location2, stemUp) {
 function drawHalfOrQuarterNote (location, type, stemUp) {
   let x = location.x
   const y = location.y
-  console.log(y)
+  // console.log(y)
   const notehead = drawNotehead(x, y, type)
   // moves stem to the side of the note
   x = stemAdjustX(x)
@@ -233,7 +233,7 @@ function drawNumber (cardNumber) {
 
 // drawCard calls all of the other functions for creating svg elements
 // and combines them into an svg.
-function drawCard (cardNumber, cardNotes, cardId) {
+function drawCard (cardNumber, cardNotes) {
   // Get the card's number.
   // write the card's number on the card
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
@@ -288,19 +288,32 @@ function addCardControl (cardNumber) {
 // placeCard calls drawCard to create a card's svg, which it places
 // in the provided DOM element.
 function placeCard (cardNumber, cardNotes, cardId, element) {
-  const cardToPlaceSVG = drawCard(cardNumber, cardNotes, cardId)
+  const cardToPlaceSVG = drawCard(cardNumber, cardNotes)
   if (cardId == 'preview') {
     const location = document.getElementById(element)
     location.appendChild(cardToPlaceSVG)
     return location
+  } else if (element.includes('example')) {
+    // console.log('element includes example')
+    // console.log('element: ', element)
+    const location = document.getElementById(element)
+    location.dataset.cardnumber = cardNumber
+    location.dataset.cardtype = 'example'
+    location.appendChild(cardToPlaceSVG)
+    // console.log('location: ', location)
+    return location
   }
   const cardHolder = document.createElement('div')
+  // console.log('element: ', element, 'holder: ', cardHolder)
   document.getElementById(element).appendChild(cardHolder)
   cardHolder.setAttribute('id', cardId)
   cardHolder.setAttribute('class', 'card-holder')
   cardHolder.setAttribute('card-number', cardNumber)
+  cardHolder.dataset.cardnumber = cardNumber
+  cardHolder.dataset.cardtype = 'inphrase'
   cardHolder.appendChild(addCardControl(cardNumber))
   cardHolder.appendChild(cardToPlaceSVG)
+  // console.log(cardHolder.dataset.cardnumber)
   return cardHolder
 }
 // iterate through notes. Use a while loop to process both quarter notes at once.
@@ -311,10 +324,27 @@ function placeCard (cardNumber, cardNotes, cardId, element) {
 // Differentiate eighth notes, which need to be sent as a pair.
 
 function replaceCard (cardNumber, cardNotes, cardId, cardHolder) {
-  console.log('parameters: ', cardNumber, cardNotes, cardId, cardHolder)
-  const cardToPlaceSVG = drawCard(cardNumber, cardNotes, cardId)
+  // console.log('parameters: ', cardNumber, cardNotes, cardId, cardHolder)
+  const cardToPlaceSVG = drawCard(cardNumber, cardNotes)
   cardHolder.replaceChild(addCardControl(cardNumber), cardHolder.childNodes[0])
   cardHolder.replaceChild(cardToPlaceSVG, cardHolder.childNodes[1])
   cardHolder.setAttribute('card-number', cardNumber)
+  return cardHolder
+}
+
+function insertCard (cardNumber, cardNotes, targetElement, parentElement) {
+  const cardToPlaceSVG = drawCard(cardNumber, cardNotes)
+  const cardHolder = document.createElement('div')
+  // console.log('element: ', element, 'holder: ', cardHolder)
+  cardHolder.setAttribute('class', 'card-holder')
+  cardHolder.setAttribute('card-number', cardNumber)
+  cardHolder.dataset.cardnumber = cardNumber
+  cardHolder.dataset.cardtype = 'inphrase'
+  // console.log('parent node: ', parentElement)
+  // console.log('insert nodes: ', cardHolder, targetElement)
+  parentElement.insertBefore(cardHolder, targetElement)
+  cardHolder.appendChild(addCardControl(cardNumber))
+  cardHolder.appendChild(cardToPlaceSVG)
+  // console.log(cardHolder.dataset.cardnumber)
   return cardHolder
 }
