@@ -35,64 +35,49 @@ header {
 
 body {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto var(--card-height) auto;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: auto 305px auto;
   grid-template-areas:
-    "title title"
-    "newcard info"
-    "music music";
+    "title title title"
+    "info music music"
+    "info work trash";
   background-color: var(--background-color);
   padding: 0px 20px;
-  max-width: calc(310px * 4 + 10px);
-  gap: 20px;
+  gap: 15px;
+  /* max-height: 80vh; */
   font-family: 'Rubik', sans-serif;
 }
 
 #info {
   grid-area: info;
-  height: var(--card-height);
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 #musicandcontrols {
   grid-area: music;
-  margin-top: 20px;
+  background-color: var(--contrast-color);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+#workspace {
+  grid-area: work;
+  background-color: var(--contrast-color);
+  border-radius: 10px;
+}
+
+#trash {
+  grid-area: trash;
   background-color: var(--contrast-color);
   border-radius: 10px;
 }
 
 
-
-
-#newcard {
-  min-width: fit-content;
-  min-height: fit-content;
-  grid-area: newcard;
-  display: grid;
-  grid-template-columns: calc(var(--card-width) + 20px) var(--card-width);
-  grid-template-rows: 3em auto 2.2em 2.2em;
-  grid-template-areas:
-    "getcard preview"
-    ". preview"
-    "playcard preview"
-    "addcard preview";
-  gap: 10px;
-}
-
 @media (max-width: 1250px){
   body {
     grid-template-rows: auto 405px auto;
-  }
-
-  #newcard {
-    grid-template-columns: var(--card-width);
-    grid-template-rows: 3em auto 2.2em 2.2em;
-    grid-template-areas:
-      "getcard"
-      "preview"
-      "playcard"
-      "addcard";
   }
 
 
@@ -108,30 +93,6 @@ body {
       "addcard";
   }
 } */
-
-.getcard {
-  grid-area: getcard;
-  background-color: var(--white-color);
-  border-radius: .5em;
-  display: flex;
-  align-items: center;
-  padding: 1em;
-  gap: 2em
-}
-
-#playme {
-  grid-area: playcard;
-}
-
-#random {
-  height: 2em;
-}
-
-#addtolist {
-  grid-area: addcard;
-}
-
-
 
 .button {
   background-color: var(--button-color);
@@ -149,19 +110,9 @@ body {
   background: var(--highlight-color);
 }
 
-/* #cardlist { */
-  /* height: 100%; */
-  /*
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5em;
-  background-color: var(--background-color);
-  align-content: space-around;
-  justify-content: left;
-} */
 
 .side {
-  display: none;
+  max-height: calc(210px * 4 + 10px);
   border-color: var(--contrast-color);
   border-width: 3px;
   border-style: solid;
@@ -171,34 +122,10 @@ body {
   /* overflow: auto; */
 }
 
-/* .example-card {
-  padding: 0.3em;
-  border-bottom: solid 1px var(--contrast-color);
-  border-right:  solid 1px var(--contrast-color);
-  border-radius: 5px;
-  color: var(--white-color);
-} */
 
-/* :hover.example-card {
-  background-color: var(--contrast-color);
-  cursor: default;
-  font-weight: bold;
-} */
-
-#preview {
-  height: var(--card-height);
-  width: var(--card-width);
-  background-color: var(--white-color);
-  border-radius: 10px;
-}
-
-/* #cardnumber {
-  width: 2.3em;
-  font-size: 1em;
-  border-radius: 5px;
-} */
 
 #phrase {
+  max-width: calc(310px * 4 + 10px);
   border-radius: 10px;
   display: flex;
   flex-wrap: wrap;
@@ -231,12 +158,13 @@ body {
 }
 
 
-.card-control > .flip {
+.card-control > * {
   opacity: 50%;
 }
 
-.card-holder {
+.card {
   height: var(--card-height);
+  position: relative;
 }
 
 .card-control {
@@ -288,7 +216,7 @@ body {
   background: radial-gradient(ellipse at left, skyblue 20%, rgba(70,159,252,0) 75%);
 }
 
-.musicdisplay .center {
+.card-control > .center {
   grid-area: center;
   cursor: grab;
 }
@@ -297,40 +225,15 @@ body {
   background: radial-gradient(ellipse at center , rgba(135, 206, 235, 0.5) 30%, rgba(70,159,252,0) 70%);
 }
 
-.card {
+svg {
   user-select: none;
 }
 
-ul {
-  display: flex;
-  justify-content: space-around;
-  list-style-type: none;
-  padding: 0%;
-  margin: 0;
-}
-
-li {
-  width: 20%;
-  background-color: var(--button-color);
-  border-radius: 1em 1em 0 0;
-  padding: .3em;
-  text-align: center;
-  font-size: 1.3em;
-  cursor: pointer;
-}
-
-li.active-tab {
-  background-color: var(--highlight-color)
-}
-
-/* [tab-content] {
-  display: none;
-} */
 
 #cardlist {
   flex-direction: column;
   /* flex-wrap: wrap; */
-  gap: 0.5em;
+  gap: 10px;
   align-content: space-around;
   justify-content: left;
   overflow: scroll;
@@ -338,31 +241,4 @@ li.active-tab {
 
 #example-card {
   width: 100px;
-}
-
-#howto {
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-around;
-  gap: 0;
-}
-
-p {
-  margin: 0;
-  background-color: var(--contrast-color);
-  border-radius: 5px;
-  padding: 0.5em;
-}
-
-.active {
-  display: flex;
-
-}
-
-.hidden > * {
-  display: none;
-}
-
-.temp {
-  background-color: var(--contrast-color);
 }
