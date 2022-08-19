@@ -19,29 +19,30 @@
   <header>
       <h1>Make Some Music</h1>
   </header>
+    <div id="game">
+    <!-- <div id="info"> -->
+      <div id="cardlist">
+          <!-- a list of music cards appears here -->
+      </div>
+    <!-- </div> -->
 
-  <div id="info">
-    <div id="cardlist" class="side">
-        <!-- a list of music cards appears here -->
+
+    <div id="musicandcontrols">
+      <div class="musicdisplay" class=bgstaff id="phrase">
+        <!-- the composition appears here -->
+      </div>
+      <div id='listcontrols'>
+        <button class="button" type="button" id="playall">Play<br>Phrase</button>
+        <button class="button" type="button" id="clear">Clear<br>Phrase</button>
+        <button class="button" type="button" id="save" disabled hidden>Save<br>Phrase</button>
+      </div>
     </div>
-  </div>
+    <div id="workspace">
 
-
-  <div id="musicandcontrols">
-    <div id='listcontrols'>
-      <button class="button" type="button" id="playall">Play Composition</button>
-      <button class="button" type="button" id="clear">Clear Composition</button>
-      <button class="button" type="button" id="save" disabled hidden>Save Composition</button>
     </div>
-    <div class="musicdisplay" class=bgstaff id="phrase">
-      <!-- the composition appears here -->
+    <div id="trash">
+
     </div>
-  </div>
-  <div id="workspace">
-
-  </div>
-  <div id="trash">
-
   </div>
 </body>
 </html>

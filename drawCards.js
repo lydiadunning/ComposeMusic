@@ -14,6 +14,7 @@
 // the card.
 const drawCard = (function () {
   // many constants, to simplify shifts in layout.
+  const COLOR = 'lightblue'
   const CARD_WIDTH = '300'
   const CARD_HEIGHT = '200'
   const BLACK_NOTE_RADIUS = '9'
@@ -36,8 +37,8 @@ const drawCard = (function () {
     circle.setAttribute('cx', x)
     circle.setAttribute('cy', y)
     circle.setAttribute('r', '1')
-    circle.setAttribute("fill", 'red')
-    circle.setAttribute("stroke-color", 'red')
+    circle.setAttribute('fill', 'red')
+    circle.setAttribute('stroke-color', 'red')
   }
 
   // returns the y axis for the top of a note's stem.
@@ -108,8 +109,6 @@ const drawCard = (function () {
     const yStemEnd2 = stemAdjustY(loc2.y, stemUp, STEM_LENGTH)
     const head1 = drawNotehead(loc1.x, loc1.y, 'eighth')
     const head2 = drawNotehead(loc2.x, loc2.y, 'eighth')
-    // const yA1 = stemAdjustY(location1.y, stemUp, STEM_ADJUST)
-    // const yA2 = stemAdjustY(location2.y, stemUp, STEM_ADJUST)
     const beam1 = drawBeam(stemAdjustX(loc1.x, stemUp), stemAdjustX(loc2.x, stemUp), loc1.y, loc2.y, yStemEnd1, yStemEnd2)
 
     return [head1, head2, beam1]
@@ -131,7 +130,7 @@ const drawCard = (function () {
       line.setAttribute('x2', CARD_WIDTH)
       line.setAttribute('y1', STAFF_LINES[i])
       line.setAttribute('y2', STAFF_LINES[i])
-      line.setAttribute('stroke', 'lightblue')
+      line.setAttribute('stroke', COLOR)
       line.setAttribute('stroke-width', STAFF_STROKE_WIDTH)
       staff.push(line)
     }
@@ -146,7 +145,7 @@ const drawCard = (function () {
       line.setAttribute('x2', COLUMNS[i])
       line.setAttribute('y1', 0)
       line.setAttribute('y2', CARD_HEIGHT)
-      line.setAttribute('stroke', 'lightblue')
+      line.setAttribute('stroke', COLOR)
       line.setAttribute('stroke-dasharray', '3, 5')
       columns.push(line)
     }
@@ -167,18 +166,20 @@ const drawCard = (function () {
   // drawAllNotes iterates through notes from the cardNotes array, calling
   // functions to create svg elements for each part of each note
   function drawAllNotes (cardNotes) {
-    //console.log(cardNotes)
+    // console.log(cardNotes)
     const drawnNotes = []
     let noteCount = 0
+    // loops through quarter note sized chunks, 4 to a card
     for (let i = 0; i < 4; i++) {
       const currentNote = cardNotes[noteCount]
       let xAxis = X_AXES[i]
-      //console.log(currentNote, currentNote.pitch)
       const yAxis = VISUAL_STAFF[currentNote.pitch]
       let stemUp = currentNote.pitch < 4 // boolean- false for notes on top of staff
       const duration = currentNote.duration
       if (duration === 'eighth') {
         const xAxis1 = xAxis - X_AXIS_Q_OFFSET
+        // increments noteCount twice to draw two quarter notes
+        // instead of one eighth note.
         noteCount++
         const xAxis2 = xAxis + X_AXIS_Q_OFFSET
         const secondNote = cardNotes[noteCount].pitch
@@ -205,6 +206,8 @@ const drawCard = (function () {
           x: xAxis.toString(),
           y: yAxis.toString()
         }, duration, stemUp))
+        // increments noteCount and i, draws one half not instead of
+        // two quarter notes
         noteCount++
         i++
       } else {
@@ -212,6 +215,7 @@ const drawCard = (function () {
           x: xAxis.toString(),
           y: yAxis.toString()
         }, duration, stemUp))
+        // increments noteCount by 1 for one quarter note.
         noteCount++
       }
     }
@@ -236,8 +240,12 @@ const drawCard = (function () {
     // Get the card's number.
     // write the card's number on the card
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+
     svg.setAttribute('width', CARD_WIDTH)
     svg.setAttribute('height', CARD_HEIGHT)
+    // svg.setAttribute('viewbox', `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`)
+    svg.setAttribute('viewBox', '0 0 300 200')
+
     const cardOutline = drawCardOutline()
     svg.appendChild(cardOutline)
     const number = drawNumber(cardNumber)
