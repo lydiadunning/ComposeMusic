@@ -84,6 +84,9 @@ const noteStringInterpreter = {
       )
     }
     return notes
+  },
+  getNotesFromArray: function (arrayOfMeasures) {
+    return this.getNotes(arrayOfMeasures.flat().join(''))
   }
 }
 
@@ -114,8 +117,7 @@ function getIndexInDom (id) {
 
 // drag and drop using drag and drop API
 function dragStartHandler (event) {
-  // console.log(`dragStart: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`);
-  // console.log('dragStart')
+  console.log('dragStart')
   event.dataTransfer.setData('measure', event.target.dataset.measure)
   event.dataTransfer.setData('draggedCardId', event.target.id)
   if (event.currentTarget.parentElement.id === 'cardlist') {
@@ -125,6 +127,7 @@ function dragStartHandler (event) {
   } else {
     event.dataTransfer.effectAllowed = 'copyMove'
   }
+  console.log('event.dataTransfer.effectAllowed: ', event.dataTransfer.effectAllowed)
 }
 
 function dragOverHandler (event) {
@@ -132,19 +135,23 @@ function dragOverHandler (event) {
   event.preventDefault()
   // console.log('dragover event.currentTarget: ', event.currentTarget)
   if (event.target === event.currentTarget || event.target.parentElement.parentElement === event.currentTarget) {
-    if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
+    if (event.dataTransfer.effectAllowed === 'move') {
+      event.dataTransfer.dropEffect = 'move'
+    } else if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
       event.dataTransfer.dropEffect = 'move'
     } else {
       event.dataTransfer.dropEffect = 'copy'
     }
   }
-  // console.log(`dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`)
+  console.log(`dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`)
 }
 
 function dropHandler (event) {
   console.log('dropHandler')
   // console.log('event: ', event)
-  // console.log('dropEffect: ', event.dataTransfer.dropEffect)
+  console.log('dropEffect: ', event.dataTransfer.dropEffect)
+  console.log('effectAllowed: ', event.dataTransfer.effectAllowed)
+
   const draggedItemId = event.dataTransfer.getData('draggedCardId')
   // Same outcome as if e.t == e.cT or e.t.pE.pE == e.cT then handle the event
   // The event listener was applied to the event's currentTarget, the target
@@ -156,31 +163,38 @@ function dropHandler (event) {
     // console.log('event.target: ', event.target)
     // console.log('event.currentTarget: ', event.currentTarget)
     // console.log('event.target.parentElement.parentElement: ', event.target.parentElement.parentElement)
+    console.log('ignore drop event')
     return
   }
   // console.log('event.currentTarget.id: ', event.currentTarget.id)
   // I tried to use the dataTransfer.dropEffect set in dragOver for this but it returned null.
   // dropEffect alters the cursor during the drag operation, but does not persist after drop.
   if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
+    console.log('move in phrase')
     const targetIndex = getIndexInDom(event.currentTarget.id)
     const startIndex = getIndexInDom(draggedItemId)
     phrase.moveMeasure(startIndex, targetIndex)
     phraseInDom.moveCard(startIndex, targetIndex)
   } else {
+    console.log('not move in phrase')
     const measure = event.dataTransfer.getData('measure')
     if (event.currentTarget.id === 'phrase') {
+      console.log('in phrase')
       if (phrase.hasSpace()) {
         phrase.addMeasure(measure)
         phraseInDom.addCard(measure)
       }
     } else {
-      if (event.currentTarget.dataset.measure != event.dataTransfer.getData('measure')) {
+      console.log('not in phrase')
+      if (event.currentTarget.dataset.measure !== measure) {
         const targetIndex = getIndexInDom(event.currentTarget.id)
         overflow.add(event.currentTarget.dataset.measure)
         phrase.replaceMeasure(measure, targetIndex)
         phraseInDom.replaceCard(measure, targetIndex)
       }
-
+    }
+    if (draggedItemId.startsWith('of')) {
+      overflow.remove(measure)
     }
   }
 }
@@ -213,7 +227,10 @@ const overflow = {
   },
   addToDOM: function (measure) {
     console.log(`add ${measure} to DOM`)
-    this.element.insertBefore(createSimpleCard(measure, `of-${this.nextId}`), this.element.firstChild)
+    const newElement = this.element.insertBefore(createCard(measure, `of-${this.nextId}`, true), this.element.firstChild)
+    newElement.addEventListener('click', (e) => {
+      play(noteStringInterpreter.getNotes(measure))
+    })
     this.reserveDOMIds.unshift(`of-${this.nextId}`)
     this.nextId++
     console.log(this.reserveDOMIds)
@@ -259,16 +276,62 @@ const phrase = {
     return this.music.length < this.lengthLimit
   },
   playAll: function () {
-    // Concatenates all notes in order into one array.
-    // plays the notes in that array.
+    // plays the notes in the music array in order.
     // Ideally, this would play one card at a time, maybe with visual effects.
     // I'm not sure yet how to play music in sequence.
     console.log('phrase.playall')
-    let interpretedMusic = []
-    for (const measure of this.music) {
-      interpretedMusic = interpretedMusic.concat(noteStringInterpreter.getNotes(measure))
+    play(noteStringInterpreter.getNotesFromArray(this.music))
+
+  }
+}
+
+const score = {
+  phrases: [], // phrases here are lists of measures
+  phraseId: 0,
+  parentElement: document.getElementById('score'),
+  playElement: document.getElementById('playscore'),
+  addPhrase: function (listOfMeasures) {
+    console.log('addPhrase')
+    console.log(this.phrases)
+    console.log(listOfMeasures)
+    this.phrases.push([...listOfMeasures])
+    this.drawNewPhrase(listOfMeasures)
+    console.log(this.phrases)
+  },
+  removePhrase: function (id) {
+    this.phrases.splice(getIndexInDom(id), 1)
+    this.parentElement.removeChild(document.getElementById(id))
+  },
+  drawNewPhrase: function (listOfMeasures) {
+    console.log('drawNewPhrase')
+
+    const newPhrase = document.createElement('div')
+    for (let i = 0; i < 4; i++) {
+      const newCard = createCard(listOfMeasures[i], `${this.phraseId}-${i}`, 1)
+      newCard.setAttribute('draggable', 'false')
+      newPhrase.appendChild(newCard)
+      console.log(newPhrase)
     }
-    play(interpretedMusic)
+    console.log(newPhrase)
+    const play = document.createElement('div')
+    play.setAttribute('class', 'play')
+    play.addEventListener('click', (e) => {
+      console.log('e.target: ', e.target.parentElement.id)
+      this.playPhrase(getIndexInDom(e.target.parentElement.id))
+    })
+    newPhrase.appendChild(play)
+    newPhrase.setAttribute('class', 'phrase')
+    newPhrase.setAttribute('id', `phrase-${this.phraseId}`)
+    this.phraseId++
+    newPhrase.setAttribute('draggable', 'true')
+    this.parentElement.insertBefore(newPhrase, this.playElement)
+
+  },
+  playPhrase: function (index) {
+    play(noteStringInterpreter.getNotesFromArray(this.phrases[index]))
+  },
+  playAll: function () {
+    play(noteStringInterpreter.getNotesFromArray(this.phrases))
   }
 }
 
@@ -323,26 +386,16 @@ function addCardControl () {
   return cardControl
 }
 
-function createCard (measure, id) {
+function createCard (measure, id, simple = null) {
   const card = document.createElement('div')
   // console.log('measure: ', measure, 'id: ', id)
   card.setAttribute('id', id)
   card.setAttribute('class', 'card')
   card.setAttribute('draggable', 'true')
   card.dataset.measure = measure
-  card.appendChild(addCardControl())
-  card.appendChild(drawCard(measure, noteStringInterpreter.getNotes(measure)))
-  // console.log(cardHolder.dataset.cardnumber)
-  card.addEventListener('dragstart', dragStartHandler)
-  return card
-}
-
-function createSimpleCard (measure, id) {
-  const card = document.createElement('div')
-  card.setAttribute('id', id)
-  card.setAttribute('class', 'card')
-  card.setAttribute('draggable', 'true')
-  card.dataset.measure = measure
+  if (!simple) {
+    card.appendChild(addCardControl())
+  }
   card.appendChild(drawCard(measure, noteStringInterpreter.getNotes(measure)))
   // console.log(cardHolder.dataset.cardnumber)
   card.addEventListener('dragstart', dragStartHandler)
@@ -421,18 +474,27 @@ playAllButton.onclick = () => {
   phrase.playAll()
 }
 
+const addToScoreButton = document.getElementById('addtoscore')
+addToScoreButton.onclick = () => {
+  score.addPhrase(phrase.music)
+}
+
+const playScore = document.getElementById('playscore')
+playScore.onclick = () => {
+  score.playAll()
+}
+
 document.getElementById('trash').addEventListener('dragover', (event) => {
   event.preventDefault()
-  const id = event.dataTransfer.getData('draggedCardId')
-  console.log('trash dragged id: ', id)
-  console.log(event.effectAllowed)
+  // const id = event.dataTransfer.getData('draggedCardId')
+  // console.log('trash dragged id: ', id)
+  // console.log(event.effectAllowed)
   if (event.dataTransfer.effectAllowed === 'copy') {
     event.dataTransfer.dropEffect = 'none'
   } else {
     event.dataTransfer.dropEffect = 'move'
   }
-  console.log('event.dropEffect: ', event.dataTransferdropEffect)
-
+  // console.log('event.dataTransfer.effectAllowed: ', event.dataTransfer.efffectAllowed, 'event.dataTransfer.dropEffect: ', event.dataTransfer.dropEffect)
 })
 document.getElementById('trash').addEventListener('drop', (event) => {
   event.preventDefault()

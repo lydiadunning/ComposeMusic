@@ -40,8 +40,8 @@ header {
   grid-template-areas:
   "title title title title"
   "info music music music"
-  "info work work ."
-  "info overflow trash .";
+  "info work work score"
+  "info overflow trash score";
   background-color: var(--background-color);
   gap: 15px;
   /* max-height: 80vh; */
@@ -83,6 +83,22 @@ header {
   border-radius: 10px;
 }
 
+#score {
+  grid-area: score;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 3px;
+}
+
+#playscore {
+  border-radius: 50%;
+  background-color: red;
+  width: 20px;
+  height: 20px;
+  margin: auto;
+}
 
 @media (max-width: 1250px){
   body {
@@ -272,4 +288,21 @@ svg {
 #overflow > .card {
   height: 100%;
   width: auto;
+}
+
+.phrase {
+  display: grid;
+  grid-template-columns: repeat(4, 2fr [col-start]) 1fr;
+  background-color: var(--button-color)
+}
+
+
+#score svg {
+  height: auto;
+  width: 100%;
+}
+
+#score .card {
+  height: auto;
+  width: 100%;
 }
