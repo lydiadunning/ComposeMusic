@@ -105,10 +105,10 @@ function play (notes /*, callback = () => {} */) {
 }
 
 function getIndexInDom (id) {
-  console.log(id)
+  // console.log(id)
   const element = document.getElementById(id)
   const siblings = element.parentElement.children
-  console.log('element: ', element)
+  // console.log('element: ', element)
   return Array.prototype.indexOf.call(siblings, element)
 }
 
@@ -120,6 +120,8 @@ function dragStartHandler (event) {
   event.dataTransfer.setData('draggedCardId', event.target.id)
   if (event.currentTarget.parentElement.id === 'cardlist') {
     event.dataTransfer.effectAllowed = 'copy'
+  } else if (event.currentTarget.parentElement.id === 'overflow') {
+    event.dataTransfer.effectAllowed = 'move'
   } else {
     event.dataTransfer.effectAllowed = 'copyMove'
   }
@@ -128,7 +130,7 @@ function dragStartHandler (event) {
 function dragOverHandler (event) {
   // preventDefault allows drop operations, the rest determines cursor appearance.
   event.preventDefault()
-  console.log('dragover event.currentTarget: ', event.currentTarget)
+  // console.log('dragover event.currentTarget: ', event.currentTarget)
   if (event.target === event.currentTarget || event.target.parentElement.parentElement === event.currentTarget) {
     if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
       event.dataTransfer.dropEffect = 'move'
@@ -136,13 +138,13 @@ function dragOverHandler (event) {
       event.dataTransfer.dropEffect = 'copy'
     }
   }
-  console.log(`dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`)
+  // console.log(`dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`)
 }
 
 function dropHandler (event) {
   console.log('dropHandler')
-  console.log('event: ', event)
-  console.log('dropEffect: ', event.dataTransfer.dropEffect)
+  // console.log('event: ', event)
+  // console.log('dropEffect: ', event.dataTransfer.dropEffect)
   const draggedItemId = event.dataTransfer.getData('draggedCardId')
   // Same outcome as if e.t == e.cT or e.t.pE.pE == e.cT then handle the event
   // The event listener was applied to the event's currentTarget, the target
@@ -151,12 +153,12 @@ function dropHandler (event) {
   // the target's parent's parent.
   // This prevents the event from firing twice on cards in the phrase.
   if (event.target !== event.currentTarget && event.target.parentElement.parentElement !== event.currentTarget) {
-    console.log('event.target: ', event.target)
-    console.log('event.currentTarget: ', event.currentTarget)
-    console.log('event.target.parentElement.parentElement: ', event.target.parentElement.parentElement)
+    // console.log('event.target: ', event.target)
+    // console.log('event.currentTarget: ', event.currentTarget)
+    // console.log('event.target.parentElement.parentElement: ', event.target.parentElement.parentElement)
     return
   }
-  console.log('event.currentTarget.id: ', event.currentTarget.id)
+  // console.log('event.currentTarget.id: ', event.currentTarget.id)
   // I tried to use the dataTransfer.dropEffect set in dragOver for this but it returned null.
   // dropEffect alters the cursor during the drag operation, but does not persist after drop.
   if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
@@ -172,10 +174,59 @@ function dropHandler (event) {
         phraseInDom.addCard(measure)
       }
     } else {
-      const targetIndex = getIndexInDom(event.currentTarget.id)
-      phrase.replaceMeasure(measure, targetIndex)
-      phraseInDom.replaceCard(measure, targetIndex)
+      if (event.currentTarget.dataset.measure != event.dataTransfer.getData('measure')) {
+        const targetIndex = getIndexInDom(event.currentTarget.id)
+        overflow.add(event.currentTarget.dataset.measure)
+        phrase.replaceMeasure(measure, targetIndex)
+        phraseInDom.replaceCard(measure, targetIndex)
+      }
+
     }
+  }
+}
+
+const overflow = {
+  // reserve and reserveDOMIds both use unshift, mirroring dom behavior.
+  // They should parallell each other.
+  reserve: [],
+  reserveDOMIds: [],
+  nextId: 0,
+  element: document.getElementById('overflow'),
+  add: function (measure) {
+    const index = this.reserve.indexOf(measure)
+    console.log('measure: ', measure, 'index: ', index)
+    if (index >= 0) {
+      console.log('found in reserve')
+      this.reserve.unshift(this.reserve.splice(index, 1)[0])
+      this.moveToFront(index)
+    } else {
+      this.addToDOM(measure)
+      this.reserve.unshift(measure)
+
+    }
+    console.log(this.reserve)
+  },
+  remove: function (measure) {
+    const index = this.reserve.indexOf(measure)
+    this.reserve.splice(index, 1)
+    this.removeFromDOM(index)
+  },
+  addToDOM: function (measure) {
+    console.log(`add ${measure} to DOM`)
+    this.element.insertBefore(createSimpleCard(measure, `of-${this.nextId}`), this.element.firstChild)
+    this.reserveDOMIds.unshift(`of-${this.nextId}`)
+    this.nextId++
+    console.log(this.reserveDOMIds)
+  },
+  moveToFront: function (index) {
+    console.log(`move ${this.reserveDOMIds[index]} to front`)
+    const id = this.reserveDOMIds.splice(index, 1)[0]
+    this.element.insertBefore(document.getElementById(id), this.element.firstChild)
+    this.reserveDOMIds.unshift(id)
+  },
+  removeFromDOM: function (index) {
+    this.element.removeChild(document.getElementById(this.reserveDOMIds[index]))
+    this.reserveDOMIds.splice(index, 1)
   }
 }
 
@@ -189,6 +240,7 @@ const phrase = {
     this.music.push(measure)
   },
   replaceMeasure: function (newMeasure, index) {
+    // overflow.add(this.music[index])
     this.music[index] = newMeasure
   },
   moveMeasure: function (index1, index2) {
@@ -221,12 +273,12 @@ const phrase = {
 }
 
 function cardClickHandler (event) {
-  console.log('cardClickHandler eventtarget: ', event.target.parentElement.parentElement)
+  // console.log('cardClickHandler eventtarget: ', event.target.parentElement.parentElement)
   const cardTarget = event.target.parentElement.parentElement
   const operation = event.target.dataset.op
   const measure = cardTarget.dataset.measure
   let newMeasure = ''
-  console.log('cardClickHandler operation: ', operation)
+  // console.log('cardClickHandler operation: ', operation)
   if (operation === 'play') {
     play(noteStringInterpreter.getNotes(measure))
     return
@@ -261,8 +313,8 @@ function addCardControl () {
     ['center', 'play']]
   properties.forEach(prop => {
     const newElement = document.createElement('div')
-    console.log('assigning cardControl')
-    console.log('prop: ', prop)
+    // console.log('assigning cardControl')
+    // console.log('prop: ', prop)
     newElement.setAttribute('class', prop[0])
     newElement.dataset.op = prop[1]
     cardControl.appendChild(newElement)
@@ -273,12 +325,24 @@ function addCardControl () {
 
 function createCard (measure, id) {
   const card = document.createElement('div')
-  console.log('measure: ', measure, 'id: ', id)
+  // console.log('measure: ', measure, 'id: ', id)
   card.setAttribute('id', id)
   card.setAttribute('class', 'card')
   card.setAttribute('draggable', 'true')
   card.dataset.measure = measure
   card.appendChild(addCardControl())
+  card.appendChild(drawCard(measure, noteStringInterpreter.getNotes(measure)))
+  // console.log(cardHolder.dataset.cardnumber)
+  card.addEventListener('dragstart', dragStartHandler)
+  return card
+}
+
+function createSimpleCard (measure, id) {
+  const card = document.createElement('div')
+  card.setAttribute('id', id)
+  card.setAttribute('class', 'card')
+  card.setAttribute('draggable', 'true')
+  card.dataset.measure = measure
   card.appendChild(drawCard(measure, noteStringInterpreter.getNotes(measure)))
   // console.log(cardHolder.dataset.cardnumber)
   card.addEventListener('dragstart', dragStartHandler)
@@ -296,10 +360,10 @@ const phraseInDom = {
     newCard.addEventListener('drop', dropHandler)
   },
   replaceCard: function (measure, index) {
-    console.log('phraseInDom.replaceCard index:', index)
-    console.log(this.phraseElement.children)
+    // console.log('phraseInDom.replaceCard index:', index)
+    // console.log(this.phraseElement.children)
     const cardToReplace = this.phraseElement.children[index]
-    console.log('cardToReplace: ', cardToReplace)
+    // console.log('cardToReplace: ', cardToReplace)
     const newCard = this.phraseElement.insertBefore(createCard(measure, cardToReplace.id), cardToReplace)
     this.phraseElement.removeChild(cardToReplace)
     newCard.addEventListener('dragover', dragOverHandler)
@@ -356,6 +420,34 @@ const playAllButton = document.getElementById('playall')
 playAllButton.onclick = () => {
   phrase.playAll()
 }
+
+document.getElementById('trash').addEventListener('dragover', (event) => {
+  event.preventDefault()
+  const id = event.dataTransfer.getData('draggedCardId')
+  console.log('trash dragged id: ', id)
+  console.log(event.effectAllowed)
+  if (event.dataTransfer.effectAllowed === 'copy') {
+    event.dataTransfer.dropEffect = 'none'
+  } else {
+    event.dataTransfer.dropEffect = 'move'
+  }
+  console.log('event.dropEffect: ', event.dataTransferdropEffect)
+
+})
+document.getElementById('trash').addEventListener('drop', (event) => {
+  event.preventDefault()
+  console.log('trashed')
+  const id = event.dataTransfer.getData('draggedCardId')
+  console.log(id)
+  if (id.startsWith('card')) {
+    const index = getIndexInDom(id)
+    phrase.removeMeasure(index)
+    phraseInDom.removeCard(index)
+    overflow.add(event.dataTransfer.getData('measure'))
+  } else if (id.startsWith('of')) {
+    overflow.remove(event.dataTransfer.getData('measure'))
+  }
+})
 
 // TODO: clickable cards. drag and drop to change order, delete, flip.
 // TODO: typed text always goes into the input?
