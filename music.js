@@ -44,23 +44,23 @@ const measures = [
   '3q5q1e1e5q',
   '2e1e2h2e6e']
 
-const noteStringInterpreter = {
+const measureInterpreter = {
   noteCodeLength: 2,
-  fliph: function (noteString) {
+  fliph: function (measure) {
     const lastNoteCodeIndex = -1 * this.noteCodeLength
-    let hFlippedNoteString = ''
-    while (noteString) {
-      hFlippedNoteString = hFlippedNoteString.concat(noteString.slice(lastNoteCodeIndex))
-      noteString = noteString.substring(0, noteString.length - this.noteCodeLength)
+    let hFlippedMeasure = ''
+    while (measure) {
+      hFlippedMeasure = hFlippedMeasure.concat(measure.slice(lastNoteCodeIndex))
+      measure = measure.substring(0, measure.length - this.noteCodeLength)
     }
-    return hFlippedNoteString
+    return hFlippedMeasure
   },
-  flipv: function (noteString) {
-    // console.log(noteString)
+  flipv: function (measure) {
+    // console.log(measure)
     let newString = ''
-    for (let note = 0; note < noteString.length; note += 2) {
-      const newPitch = STAFF.length - parseInt(noteString[note]) - 1
-      newString = newString.concat(newPitch.toString(), noteString[note + 1])
+    for (let note = 0; note < measure.length; note += 2) {
+      const newPitch = STAFF.length - parseInt(measure[note]) - 1
+      newString = newString.concat(newPitch.toString(), measure[note + 1])
     }
     return newString
   },
@@ -72,14 +72,14 @@ const noteStringInterpreter = {
       default: throw new Error('not a valid duration: ', duration)
     }
   },
-  getNotes: function (noteString) {
-    // console.log("getNotes string: ", noteString)
+  getNotes: function (measure) {
+    // console.log("getNotes string: ", measure)
     const notes = []
-    for (let note = 0; note < noteString.length; note += 2) {
+    for (let note = 0; note < measure.length; note += 2) {
       notes.push(
         {
-          pitch: parseInt(noteString[note]),
-          duration: this.interpretDuration(noteString[note + 1])
+          pitch: parseInt(measure[note]),
+          duration: this.interpretDuration(measure[note + 1])
         }
       )
     }
@@ -108,10 +108,12 @@ function play (notes /*, callback = () => {} */) {
 }
 
 function getIndexInDom (id) {
-  // console.log(id)
+  console.log('getIndexInDom')
+  console.log(id)
   const element = document.getElementById(id)
   const siblings = element.parentElement.children
-  // console.log('element: ', element)
+  console.log('element: ', element)
+  console.log('element.parentElement.children: ', element.parentElement.children)
   return Array.prototype.indexOf.call(siblings, element)
 }
 
@@ -119,25 +121,39 @@ function getIndexInDom (id) {
 function dragStartHandler (event) {
   console.log('dragStart')
   event.dataTransfer.setData('measure', event.target.dataset.measure)
-  event.dataTransfer.setData('draggedCardId', event.target.id)
-  if (event.currentTarget.parentElement.id === 'cardlist') {
-    event.dataTransfer.effectAllowed = 'copy'
-  } else if (event.currentTarget.parentElement.id === 'overflow') {
-    event.dataTransfer.effectAllowed = 'move'
-  } else {
-    event.dataTransfer.effectAllowed = 'copyMove'
-  }
+  event.dataTransfer.setData('draggedItemId', event.target.id)
+  const sourceId = event.currentTarget.parentElement.id
+  console.log(event.currentTarget.parentElement.id)
+  console.log('sourceId: ', sourceId)
+  event.dataTransfer.setData('sourceId', sourceId)
+  event.dataTransfer.effectAllowed = (sourceId === 'cardlist') ? 'copy'
+    : (sourceId === 'overflow' || sourceId === 'workspace') ? 'move'
+      : 'copyMove'
+  // if (sourceId === 'cardlist') {
+  //   event.dataTransfer.effectAllowed = 'copy'
+  // } else if (sourceId === 'overflow') {
+  //   event.dataTransfer.effectAllowed = 'move'
+  // } else {
+  //   event.dataTransfer.effectAllowed = 'copyMove'
+  // }
   console.log('event.dataTransfer.effectAllowed: ', event.dataTransfer.effectAllowed)
+  console.log('draggedItemId: ', event.dataTransfer.getData('draggedItemId'))
+  console.log('source: ', event.dataTransfer.getData('sourceId'))
 }
 
 function dragOverHandler (event) {
   // preventDefault allows drop operations, the rest determines cursor appearance.
   event.preventDefault()
   // console.log('dragover event.currentTarget: ', event.currentTarget)
+  // console.log(event.dataTransfer.getData('source'))
+  // if (event.dataTransfer.getData('source') === 'score') {
+  //   event.dataTransfer.dropEffect = 'move'
+  // } else
+  console.log('in dragOverHandler, id starts with card:', event.currentTarget.id.startsWith('card'))
   if (event.target === event.currentTarget || event.target.parentElement.parentElement === event.currentTarget) {
-    if (event.dataTransfer.effectAllowed === 'move') {
+    if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
       event.dataTransfer.dropEffect = 'move'
-    } else if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
+    } else if (event.dataTransfer.effectAllowed === 'move') {
       event.dataTransfer.dropEffect = 'move'
     } else {
       event.dataTransfer.dropEffect = 'copy'
@@ -151,8 +167,9 @@ function dropHandler (event) {
   // console.log('event: ', event)
   console.log('dropEffect: ', event.dataTransfer.dropEffect)
   console.log('effectAllowed: ', event.dataTransfer.effectAllowed)
+  console.log(`dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`)
 
-  const draggedItemId = event.dataTransfer.getData('draggedCardId')
+  const draggedItemId = event.dataTransfer.getData('draggedItemId')
   // Same outcome as if e.t == e.cT or e.t.pE.pE == e.cT then handle the event
   // The event listener was applied to the event's currentTarget, the target
   // registers the event.
@@ -169,10 +186,20 @@ function dropHandler (event) {
   // console.log('event.currentTarget.id: ', event.currentTarget.id)
   // I tried to use the dataTransfer.dropEffect set in dragOver for this but it returned null.
   // dropEffect alters the cursor during the drag operation, but does not persist after drop.
-  if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
+  console.log('draggedItemId: ', draggedItemId)
+
+  console.log('source: ', event.dataTransfer.getData('sourceId'))
+  if (event.dataTransfer.getData('sourceId') === 'score' || draggedItemId.startsWith('phrase')) {
+    console.log('replace phrase')
+    const replacementPhrase = score.getPhrase(getIndexInDom(draggedItemId))
+    console.log(replacementPhrase)
+    phrase.rewrite(replacementPhrase)
+    phraseInDom.rewrite(replacementPhrase)
+  } else if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
     console.log('move in phrase')
     const targetIndex = getIndexInDom(event.currentTarget.id)
     const startIndex = getIndexInDom(draggedItemId)
+    console.log('indexes: ', startIndex, targetIndex)
     phrase.moveMeasure(startIndex, targetIndex)
     phraseInDom.moveCard(startIndex, targetIndex)
   } else {
@@ -196,6 +223,11 @@ function dropHandler (event) {
     if (draggedItemId.startsWith('of')) {
       overflow.remove(measure)
     }
+    if (draggedItemId.startsWith('work')) {
+      document.getElementById('workspace').removeChild(document.getElementById(draggedItemId))
+    }
+
+
   }
 }
 
@@ -229,7 +261,7 @@ const overflow = {
     console.log(`add ${measure} to DOM`)
     const newElement = this.element.insertBefore(createCard(measure, `of-${this.nextId}`, true), this.element.firstChild)
     newElement.addEventListener('click', (e) => {
-      play(noteStringInterpreter.getNotes(measure))
+      play(measureInterpreter.getNotes(measure))
     })
     this.reserveDOMIds.unshift(`of-${this.nextId}`)
     this.nextId++
@@ -275,13 +307,16 @@ const phrase = {
   hasSpace: function () {
     return this.music.length < this.lengthLimit
   },
+  rewrite: function (newMusic) {
+    this.music = [...newMusic] // this notation creates a new array with the contents of newMusic
+    console.log(this.music)
+  },
   playAll: function () {
     // plays the notes in the music array in order.
     // Ideally, this would play one card at a time, maybe with visual effects.
     // I'm not sure yet how to play music in sequence.
     console.log('phrase.playall')
-    play(noteStringInterpreter.getNotesFromArray(this.music))
-
+    play(measureInterpreter.getNotesFromArray(this.music))
   }
 }
 
@@ -294,17 +329,21 @@ const score = {
     console.log('addPhrase')
     console.log(this.phrases)
     console.log(listOfMeasures)
-    this.phrases.push([...listOfMeasures])
-    this.drawNewPhrase(listOfMeasures)
+    this.phrases.push([...listOfMeasures]) // this notation creates a new array with the contents of listOfMeasures
+    this.drawPhraseToDom(listOfMeasures)
     console.log(this.phrases)
   },
   removePhrase: function (id) {
     this.phrases.splice(getIndexInDom(id), 1)
     this.parentElement.removeChild(document.getElementById(id))
   },
+  drawPhraseToDom: function (listOfMeasures) {
+    const newPhrase = this.drawNewPhrase(listOfMeasures)
+    this.parentElement.insertBefore(newPhrase, this.playElement)
+
+  },
   drawNewPhrase: function (listOfMeasures) {
     console.log('drawNewPhrase')
-
     const newPhrase = document.createElement('div')
     for (let i = 0; i < 4; i++) {
       const newCard = createCard(listOfMeasures[i], `${this.phraseId}-${i}`, 1)
@@ -313,25 +352,28 @@ const score = {
       console.log(newPhrase)
     }
     console.log(newPhrase)
-    const play = document.createElement('div')
-    play.setAttribute('class', 'play')
-    play.addEventListener('click', (e) => {
-      console.log('e.target: ', e.target.parentElement.id)
-      this.playPhrase(getIndexInDom(e.target.parentElement.id))
+    newPhrase.addEventListener('click', (e) => {
+      console.log('this.phrases: ', this.phrases)
+
+      console.log('e.currentTarget: ', e.currentTarget.id)
+      this.playPhrase(getIndexInDom(e.currentTarget.id))
+      console.log(this.phrases)
     })
-    newPhrase.appendChild(play)
     newPhrase.setAttribute('class', 'phrase')
     newPhrase.setAttribute('id', `phrase-${this.phraseId}`)
     this.phraseId++
     newPhrase.setAttribute('draggable', 'true')
-    this.parentElement.insertBefore(newPhrase, this.playElement)
-
+    newPhrase.addEventListener('dragstart', dragStartHandler)
+    return newPhrase
   },
   playPhrase: function (index) {
-    play(noteStringInterpreter.getNotesFromArray(this.phrases[index]))
+    play(measureInterpreter.getNotesFromArray(this.phrases[index]))
   },
   playAll: function () {
-    play(noteStringInterpreter.getNotesFromArray(this.phrases))
+    play(measureInterpreter.getNotesFromArray(this.phrases))
+  },
+  getPhrase: function (index) {
+    return this.phrases[index]
   }
 }
 
@@ -340,15 +382,16 @@ function cardClickHandler (event) {
   const cardTarget = event.target.parentElement.parentElement
   const operation = event.target.dataset.op
   const measure = cardTarget.dataset.measure
+  const style = cardTarget.getAttribute('style')
   let newMeasure = ''
   // console.log('cardClickHandler operation: ', operation)
   if (operation === 'play') {
-    play(noteStringInterpreter.getNotes(measure))
+    play(measureInterpreter.getNotes(measure))
     return
   } else if (operation === 'flipv') {
-    newMeasure = noteStringInterpreter.flipv(measure)
+    newMeasure = measureInterpreter.flipv(measure)
   } else if (operation === 'fliph') {
-    newMeasure = noteStringInterpreter.fliph(measure)
+    newMeasure = measureInterpreter.fliph(measure)
   } else {
     console.log('Something has gone wrong with dataset.op in cardClickHandler')
     return
@@ -357,9 +400,11 @@ function cardClickHandler (event) {
   if (parent.id === 'phrase') {
     const index = getIndexInDom(cardTarget.id)
     phrase.replaceMeasure(newMeasure, index)
-    phraseInDom.replaceCard(newMeasure, index)
+    phraseInDom.replaceCard(newMeasure, index).setAttribute('style', style)
   } else {
-    parent.insertBefore(createCard(newMeasure, cardTarget.id), cardTarget)
+    const newCard = createCard(newMeasure, cardTarget.id)
+    newCard.setAttribute('style', style)
+    parent.insertBefore(newCard, cardTarget)
     parent.removeChild(cardTarget)
   }
 }
@@ -388,7 +433,7 @@ function addCardControl () {
 
 function createCard (measure, id, simple = null) {
   const card = document.createElement('div')
-  // console.log('measure: ', measure, 'id: ', id)
+  console.log('measure: ', measure, 'id: ', id)
   card.setAttribute('id', id)
   card.setAttribute('class', 'card')
   card.setAttribute('draggable', 'true')
@@ -396,7 +441,7 @@ function createCard (measure, id, simple = null) {
   if (!simple) {
     card.appendChild(addCardControl())
   }
-  card.appendChild(drawCard(measure, noteStringInterpreter.getNotes(measure)))
+  card.appendChild(drawCard(measure, measureInterpreter.getNotes(measure)))
   // console.log(cardHolder.dataset.cardnumber)
   card.addEventListener('dragstart', dragStartHandler)
   return card
@@ -411,6 +456,7 @@ const phraseInDom = {
     this.nextId++
     newCard.addEventListener('dragover', dragOverHandler)
     newCard.addEventListener('drop', dropHandler)
+    return newCard
   },
   replaceCard: function (measure, index) {
     // console.log('phraseInDom.replaceCard index:', index)
@@ -421,8 +467,10 @@ const phraseInDom = {
     this.phraseElement.removeChild(cardToReplace)
     newCard.addEventListener('dragover', dragOverHandler)
     newCard.addEventListener('drop', dropHandler)
+    return newCard
   },
   moveCard: function (index1, index2) {
+    console.log('in movecard: ', index1, index2)
     if (this.phraseElement.children.length - 1 === index2) {
       this.phraseElement.appendChild(this.phraseElement.children[index1])
     } else {
@@ -431,6 +479,7 @@ const phraseInDom = {
     }
   },
   removeCard: function (index) {
+    console.log('in removeCard: ', index, this.phraseElement.children[index])
     return this.phraseElement.removeChild(this.phraseElement.children[index])
   },
   clear: function () {
@@ -440,6 +489,12 @@ const phraseInDom = {
       this.phraseElement.removeChild(this.phraseElement.firstElementChild)
       count--
     }
+  },
+  rewrite: function (music) {
+    this.clear()
+    music.forEach(measure => {
+      this.addCard(measure)
+    })
   }
 }
 
@@ -484,30 +539,66 @@ playScore.onclick = () => {
   score.playAll()
 }
 
+let workid = 0
+const workspace = document.getElementById('workspace')
+workspace.addEventListener('dragover', (event) => {
+  event.preventDefault()
+  event.dataTransfer.dropEffect = 'copy'
+})
+
+workspace.addEventListener('drop', (event) => {
+  event.preventDefault()
+  const element = document.getElementById(event.dataTransfer.getData('draggedItemId'))
+  const workspaceLocation = workspace.getBoundingClientRect()
+  let newElement = null
+  if (event.dataTransfer.getData('sourceId') === 'score') {
+    newElement = score.drawNewPhrase(score.getPhrase(getIndexInDom(event.dataTransfer.getData('draggedItemId'))))
+
+    workspace.appendChild(newElement)
+  } else {
+    newElement = createCard(event.dataTransfer.getData('measure'), `work-${workid}`)
+    workspace.appendChild(newElement)
+  }
+  workid++
+  const width = element.offsetWidth
+  const height = element.offsetHeight
+  const newX = event.pageX - workspaceLocation.x - (width / 2)
+  const newY = event.pageY - workspaceLocation.y - (height / 2)
+  console.log("x: ", 'page: ', event.pageX, 'width: ', width, 'element: ', workspaceLocation.x, 'newX: ', newX)
+  console.log("y: ", 'page: ', event.pageY, 'height: ', height, 'element: ', workspaceLocation.y, 'newY: ', newY)
+
+  const style = `width: ${width}px; height: ${height}px; position: absolute; top: ${newY}px; left: ${newX}px`
+  console.log('style: ', style)
+  newElement.setAttribute('style', style)
+  // newElement.setAttribute('id', "${workspace_id}-wo")
+})
+
 document.getElementById('trash').addEventListener('dragover', (event) => {
   event.preventDefault()
-  // const id = event.dataTransfer.getData('draggedCardId')
-  // console.log('trash dragged id: ', id)
-  // console.log(event.effectAllowed)
   if (event.dataTransfer.effectAllowed === 'copy') {
     event.dataTransfer.dropEffect = 'none'
   } else {
     event.dataTransfer.dropEffect = 'move'
   }
-  // console.log('event.dataTransfer.effectAllowed: ', event.dataTransfer.efffectAllowed, 'event.dataTransfer.dropEffect: ', event.dataTransfer.dropEffect)
 })
 document.getElementById('trash').addEventListener('drop', (event) => {
   event.preventDefault()
   console.log('trashed')
-  const id = event.dataTransfer.getData('draggedCardId')
-  console.log(id)
-  if (id.startsWith('card')) {
-    const index = getIndexInDom(id)
+  const sourceId = event.dataTransfer.getData('sourceId')
+  if (sourceId === 'phrase') {
+    const index = getIndexInDom(event.dataTransfer.getData('draggedItemId'))
     phrase.removeMeasure(index)
     phraseInDom.removeCard(index)
     overflow.add(event.dataTransfer.getData('measure'))
-  } else if (id.startsWith('of')) {
+  } else if (sourceId === 'overflow') {
     overflow.remove(event.dataTransfer.getData('measure'))
+  } else if (sourceId === 'score') {
+    score.removePhrase(event.dataTransfer.getData('draggedItemId'))
+  } else if (sourceId === 'workspace') {
+    workspace.removeChild(document.getElementById(event.dataTransfer.getData('draggedItemId')))
+    if (!event.dataTransfer.getData('draggedItemId').startsWith('phrase')) {
+      overflow.add(event.dataTransfer.getData('measure'))
+    }
   }
 })
 

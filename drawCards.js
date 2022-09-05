@@ -156,7 +156,7 @@ const drawCard = (function () {
     const cardOutline = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     cardOutline.setAttribute('width', CARD_WIDTH)
     cardOutline.setAttribute('height', CARD_HEIGHT)
-    cardOutline.setAttribute('fill', 'transparent')
+    cardOutline.setAttribute('fill', 'white')
     cardOutline.setAttribute('stroke', 'lightblue')
     cardOutline.setAttribute('stroke-width', '5')
     cardOutline.setAttribute('rx', '15')

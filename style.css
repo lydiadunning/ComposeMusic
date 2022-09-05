@@ -18,16 +18,23 @@
     --background-color: white;
     --button-color: thistle;
     --highlight-color: gainsboro;
-    --white-color: white;
+    --white-color: whitesmoke;
     --contrast-color: lightgray;
 
 /* reference sizes */
     --card-height: 200px;
     --card-width: 300px;
 
+    padding: 0;
+    margin: 0;
   }
 
-header {
+body {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+#header {
   text-align: center;
   grid-area: title;
   color: var(--white-color);
@@ -36,7 +43,7 @@ header {
 #game {
   display: grid;
   grid-template-columns: 2fr 5fr 2fr 3fr;
-  grid-template-rows: auto 250px auto 150px;
+  grid-template-rows: 5% 14.5vw 40% 10%;
   grid-template-areas:
   "title title title title"
   "info music music music"
@@ -61,12 +68,18 @@ header {
   border-radius: 10px;
   padding: 10px;
   display: flex;
+
 }
 
 #workspace {
   grid-area: work;
-  background-color: var(--contrast-color);
+  border-style: double;
+  border-width: 8px;
+  border-color: var(--highlight-color);
+  background-color: var(--white-color);
   border-radius: 10px;
+  overflow: hidden;
+  position: relative;
 }
 
 #overflow {
@@ -93,11 +106,16 @@ header {
 }
 
 #playscore {
-  border-radius: 50%;
-  background-color: red;
-  width: 20px;
-  height: 20px;
+  /* border-radius: 50%; */
+  /* background-color: thistle; */
+  /* width: 20px; */
+  /* height: 20px; */
   margin: auto;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-left: 20px solid thistle;
+  border-bottom: 10px solid transparent;
 }
 
 @media (max-width: 1250px){
@@ -139,16 +157,20 @@ header {
 
 #phrase {
   width: 100%;
-  max-width: calc(310px * 4 + 10px);
-  border-radius: 10px;
-  display: flex;
-  flex-wrap: wrap;
+  height: auto;
+  aspect-ratio: 35 / 22;
+  /*border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
   gap: 10px 10px;
-  min-height: 205px;
   min-width: calc(var(--card-width) + 20px);
-  padding: 10px;
+  padding: 10px; */
   background-color: var(--white-color);
   background-image: url(graphics/staff.svg);
+  background-size: 100% 100%;
+  background-clip: padding-box;
+  background-repeat: round;
   /* background-image: url('data:image/svg+xml,\
   <svg height="200">\
   <line x1="0" x2="300" y1="40" y2="40" stroke="lightsteelblue" stroke-width="3"></line>\
@@ -178,8 +200,9 @@ header {
 }
 
 .card {
+  font-size: 0; /*The card div will be the wrong size without this setting*/
   aspect-ratio: 3 / 2;
-  height: var(--card-height);
+  /* height: var(--card-height); */
   position: relative;
 }
 
@@ -247,6 +270,8 @@ header {
 
 svg {
   user-select: none;
+  height: 100%;
+  width: 100%;
 }
 
 #cardlist {
@@ -255,7 +280,7 @@ svg {
   border-width: 3px;
   border-style: solid;
   border-radius: 10px;
-  height: 100%;
+  /* height: 100%; */
   padding: 0.5em;
 
   display: flex;
@@ -290,19 +315,24 @@ svg {
   width: auto;
 }
 
+
 .phrase {
   display: grid;
-  grid-template-columns: repeat(4, 2fr [col-start]) 1fr;
-  background-color: var(--button-color)
+  grid-template-columns: repeat(4, 2fr [col-start]);
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  background-color: var(--button-color);
+  border-radius: 5px;
 }
 
 
-#score svg {
+.phrase svg {
   height: auto;
   width: 100%;
 }
 
-#score .card {
+/* .phrase .card {
   height: auto;
   width: 100%;
-}
+} */
