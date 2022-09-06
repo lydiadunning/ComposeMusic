@@ -43,7 +43,7 @@ body {
 #game {
   display: grid;
   grid-template-columns: 2fr 5fr 2fr 3fr;
-  grid-template-rows: 5% 14.5vw 40% 10%;
+  grid-template-rows: 10vh 14.5vw 40vh 15vh;
   grid-template-areas:
   "title title title title"
   "info music music music"
@@ -86,8 +86,9 @@ body {
   display: flex;
   gap: 10px;
   grid-area: overflow;
-  overflow: scroll;
+  overflow-x: scroll;
   padding: 10px 0;
+  border-radius: 10px;
 }
 
 #trash {
@@ -290,7 +291,7 @@ svg {
   gap: 10px;
   align-content: space-around;
   justify-content: left;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 
