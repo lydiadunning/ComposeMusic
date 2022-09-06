@@ -129,13 +129,6 @@ function dragStartHandler (event) {
   event.dataTransfer.effectAllowed = (sourceId === 'cardlist') ? 'copy'
     : (sourceId === 'overflow' || sourceId === 'workspace') ? 'move'
       : 'copyMove'
-  // if (sourceId === 'cardlist') {
-  //   event.dataTransfer.effectAllowed = 'copy'
-  // } else if (sourceId === 'overflow') {
-  //   event.dataTransfer.effectAllowed = 'move'
-  // } else {
-  //   event.dataTransfer.effectAllowed = 'copyMove'
-  // }
   console.log('event.dataTransfer.effectAllowed: ', event.dataTransfer.effectAllowed)
   console.log('draggedItemId: ', event.dataTransfer.getData('draggedItemId'))
   console.log('source: ', event.dataTransfer.getData('sourceId'))
@@ -143,6 +136,7 @@ function dragStartHandler (event) {
 
 function dragOverHandler (event) {
   // preventDefault allows drop operations, the rest determines cursor appearance.
+  // dropEffect alters the cursor during the drag operation, but does not persist after drop.
   event.preventDefault()
   // console.log('dragover event.currentTarget: ', event.currentTarget)
   // console.log(event.dataTransfer.getData('source'))
@@ -162,6 +156,38 @@ function dragOverHandler (event) {
   console.log(`dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`)
 }
 
+// drop handling functions:
+function replacePhrase (replacementPhrase) {
+  phrase.rewrite(replacementPhrase)
+  phraseInDom.rewrite(replacementPhrase)
+}
+function moveInPhrase (startIndex, targetIndex) {
+  phraseInDom.moveCard(startIndex, targetIndex)
+}
+function addToPhrase (measure) {
+  phrase.addMeasure(measure)
+  phraseInDom.addCard(measure)
+}
+function replaceInPhrase (measure, targetIndex, replacedMeasure) {
+  overflow.add(replacedMeasure)
+  phrase.replaceMeasure(measure, targetIndex)
+  phraseInDom.replaceCard(measure, targetIndex)
+}
+function moveCardToPhrase (measure, event, draggedItemId) {
+  if (event.currentTarget.id === 'phrase' && phrase.hasSpace()) {
+    console.log('in phrase')
+    addToPhrase(measure)
+  } else if (event.currentTarget.dataset.measure !== measure) {
+    replaceInPhrase(measure, getIndexInDom(event.currentTarget.id), event.currentTarget.dataset.measure)
+  }
+  if (draggedItemId.startsWith('of')) {
+    overflow.remove(measure)
+  }
+  if (draggedItemId.startsWith('work')) {
+    document.getElementById('workspace').removeChild(document.getElementById(draggedItemId))
+  }
+}
+
 function dropHandler (event) {
   console.log('dropHandler')
   // console.log('event: ', event)
@@ -170,64 +196,23 @@ function dropHandler (event) {
   console.log(`dragOver: dropEffect = ${event.dataTransfer.dropEffect} ; effectAllowed = ${event.dataTransfer.effectAllowed}`)
 
   const draggedItemId = event.dataTransfer.getData('draggedItemId')
-  // Same outcome as if e.t == e.cT or e.t.pE.pE == e.cT then handle the event
   // The event listener was applied to the event's currentTarget, the target
   // registers the event.
   // The currentTarget must be the same as either the target or
   // the target's parent's parent.
   // This prevents the event from firing twice on cards in the phrase.
   if (event.target !== event.currentTarget && event.target.parentElement.parentElement !== event.currentTarget) {
-    // console.log('event.target: ', event.target)
-    // console.log('event.currentTarget: ', event.currentTarget)
-    // console.log('event.target.parentElement.parentElement: ', event.target.parentElement.parentElement)
-    console.log('ignore drop event')
     return
   }
-  // console.log('event.currentTarget.id: ', event.currentTarget.id)
-  // I tried to use the dataTransfer.dropEffect set in dragOver for this but it returned null.
-  // dropEffect alters the cursor during the drag operation, but does not persist after drop.
-  console.log('draggedItemId: ', draggedItemId)
-
-  console.log('source: ', event.dataTransfer.getData('sourceId'))
   if (event.dataTransfer.getData('sourceId') === 'score' || draggedItemId.startsWith('phrase')) {
     console.log('replace phrase')
-    const replacementPhrase = score.getPhrase(getIndexInDom(draggedItemId))
-    console.log(replacementPhrase)
-    phrase.rewrite(replacementPhrase)
-    phraseInDom.rewrite(replacementPhrase)
+    replacePhrase(score.getPhrase(getIndexInDom(draggedItemId)))
   } else if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
     console.log('move in phrase')
-    const targetIndex = getIndexInDom(event.currentTarget.id)
-    const startIndex = getIndexInDom(draggedItemId)
-    console.log('indexes: ', startIndex, targetIndex)
-    phrase.moveMeasure(startIndex, targetIndex)
-    phraseInDom.moveCard(startIndex, targetIndex)
+    moveInPhrase(getIndexInDom(draggedItemId), getIndexInDom(event.currentTarget.id))
   } else {
     console.log('not move in phrase')
-    const measure = event.dataTransfer.getData('measure')
-    if (event.currentTarget.id === 'phrase') {
-      console.log('in phrase')
-      if (phrase.hasSpace()) {
-        phrase.addMeasure(measure)
-        phraseInDom.addCard(measure)
-      }
-    } else {
-      console.log('not in phrase')
-      if (event.currentTarget.dataset.measure !== measure) {
-        const targetIndex = getIndexInDom(event.currentTarget.id)
-        overflow.add(event.currentTarget.dataset.measure)
-        phrase.replaceMeasure(measure, targetIndex)
-        phraseInDom.replaceCard(measure, targetIndex)
-      }
-    }
-    if (draggedItemId.startsWith('of')) {
-      overflow.remove(measure)
-    }
-    if (draggedItemId.startsWith('work')) {
-      document.getElementById('workspace').removeChild(document.getElementById(draggedItemId))
-    }
-
-
+    moveCardToPhrase(event.dataTransfer.getData('measure'), event, draggedItemId)
   }
 }
 
@@ -340,29 +325,30 @@ const score = {
   drawPhraseToDom: function (listOfMeasures) {
     const newPhrase = this.drawNewPhrase(listOfMeasures)
     this.parentElement.insertBefore(newPhrase, this.playElement)
-
+  },
+  setPhraseAttributes: function (newPhrase) {
+    newPhrase.setAttribute('class', 'phrase')
+    newPhrase.setAttribute('id', `phrase-${this.phraseId}`)
+    newPhrase.setAttribute('draggable', 'true')
+  },
+  drawCardsInPhrase: function (listOfMeasures, phrase) {
+    for (let i = 0; i < 4; i++) {
+      const newCard = createCard(listOfMeasures[i], `${this.phraseId}-${i}`, 1)
+      newCard.setAttribute('draggable', 'false')
+      phrase.appendChild(newCard)
+      console.log(phrase)
+    }
   },
   drawNewPhrase: function (listOfMeasures) {
     console.log('drawNewPhrase')
     const newPhrase = document.createElement('div')
-    for (let i = 0; i < 4; i++) {
-      const newCard = createCard(listOfMeasures[i], `${this.phraseId}-${i}`, 1)
-      newCard.setAttribute('draggable', 'false')
-      newPhrase.appendChild(newCard)
-      console.log(newPhrase)
-    }
+    this.drawCardsInPhrase(listOfMeasures, newPhrase)
     console.log(newPhrase)
     newPhrase.addEventListener('click', (e) => {
-      console.log('this.phrases: ', this.phrases)
-
-      console.log('e.currentTarget: ', e.currentTarget.id)
       this.playPhrase(getIndexInDom(e.currentTarget.id))
-      console.log(this.phrases)
     })
-    newPhrase.setAttribute('class', 'phrase')
-    newPhrase.setAttribute('id', `phrase-${this.phraseId}`)
+    this.setPhraseAttributes(newPhrase)
     this.phraseId++
-    newPhrase.setAttribute('draggable', 'true')
     newPhrase.addEventListener('dragstart', dragStartHandler)
     return newPhrase
   },
@@ -546,31 +532,28 @@ workspace.addEventListener('dragover', (event) => {
   event.dataTransfer.dropEffect = 'copy'
 })
 
+function stylePositionInWorkspace (element, event) {
+  const workspaceLocation = workspace.getBoundingClientRect()
+  const width = element.offsetWidth
+  const height = element.offsetHeight
+  const newX = event.pageX - workspaceLocation.x - (width / 2)
+  const newY = event.pageY - workspaceLocation.y - (height / 2)
+  return `width: ${width}px; height: ${height}px; position: absolute; top: ${newY}px; left: ${newX}px`
+}
+
 workspace.addEventListener('drop', (event) => {
   event.preventDefault()
   const element = document.getElementById(event.dataTransfer.getData('draggedItemId'))
-  const workspaceLocation = workspace.getBoundingClientRect()
   let newElement = null
   if (event.dataTransfer.getData('sourceId') === 'score') {
     newElement = score.drawNewPhrase(score.getPhrase(getIndexInDom(event.dataTransfer.getData('draggedItemId'))))
-
     workspace.appendChild(newElement)
   } else {
     newElement = createCard(event.dataTransfer.getData('measure'), `work-${workid}`)
     workspace.appendChild(newElement)
   }
   workid++
-  const width = element.offsetWidth
-  const height = element.offsetHeight
-  const newX = event.pageX - workspaceLocation.x - (width / 2)
-  const newY = event.pageY - workspaceLocation.y - (height / 2)
-  console.log("x: ", 'page: ', event.pageX, 'width: ', width, 'element: ', workspaceLocation.x, 'newX: ', newX)
-  console.log("y: ", 'page: ', event.pageY, 'height: ', height, 'element: ', workspaceLocation.y, 'newY: ', newY)
-
-  const style = `width: ${width}px; height: ${height}px; position: absolute; top: ${newY}px; left: ${newX}px`
-  console.log('style: ', style)
-  newElement.setAttribute('style', style)
-  // newElement.setAttribute('id', "${workspace_id}-wo")
+  newElement.setAttribute('style', stylePositionInWorkspace(element, event))
 })
 
 document.getElementById('trash').addEventListener('dragover', (event) => {
