@@ -417,12 +417,16 @@ function addCardControl () {
   return cardControl
 }
 
-function createCard (measure, id, simple = null) {
-  const card = document.createElement('div')
-  console.log('measure: ', measure, 'id: ', id)
+function setCardAttributes (card, id) {
   card.setAttribute('id', id)
   card.setAttribute('class', 'card')
   card.setAttribute('draggable', 'true')
+}
+
+function createCard (measure, id, simple = null) {
+  const card = document.createElement('div')
+  console.log('measure: ', measure, 'id: ', id)
+  setCardAttributes(card, id)
   card.dataset.measure = measure
   if (!simple) {
     card.appendChild(addCardControl())

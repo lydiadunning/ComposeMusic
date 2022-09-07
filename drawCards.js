@@ -178,8 +178,8 @@ const drawCard = (function () {
       const duration = currentNote.duration
       if (duration === 'eighth') {
         const xAxis1 = xAxis - X_AXIS_Q_OFFSET
-        // increments noteCount twice to draw two quarter notes
-        // instead of one eighth note.
+        // increments noteCount twice to draw two eighth notes
+        // instead of one quarter note.
         noteCount++
         const xAxis2 = xAxis + X_AXIS_Q_OFFSET
         const secondNote = cardNotes[noteCount].pitch
@@ -245,17 +245,14 @@ const drawCard = (function () {
     svg.setAttribute('height', CARD_HEIGHT)
     // svg.setAttribute('viewbox', `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`)
     svg.setAttribute('viewBox', '0 0 300 200')
-
-    const cardOutline = drawCardOutline()
-    svg.appendChild(cardOutline)
-    const number = drawNumber(cardNumber)
-    svg.appendChild(number)
-    const columns = drawColumns()
-    columns.forEach(column => svg.appendChild(column))
-    const staff = drawStaff()
-    staff.forEach(line => svg.appendChild(line))
-    const allNotes = drawAllNotes(cardNotes)
-    allNotes.forEach(note => svg.appendChild(note))
+    const svgComponents = [
+      drawCardOutline(),
+      drawNumber(cardNumber),
+      drawColumns(),
+      drawStaff(),
+      drawAllNotes(cardNotes)
+    ].flat()
+    svgComponents.forEach(item => svg.appendChild(item))
     return svg
   }
 })()
