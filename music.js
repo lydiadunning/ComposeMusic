@@ -127,7 +127,7 @@ function dragStartHandler (event) {
   console.log('sourceId: ', sourceId)
   event.dataTransfer.setData('sourceId', sourceId)
   event.dataTransfer.effectAllowed = (sourceId === 'cardlist') ? 'copy'
-    : (sourceId === 'overflow' || sourceId === 'workspace') ? 'move'
+    : (sourceId === 'workspace') ? 'move'
       : 'copyMove'
   console.log('event.dataTransfer.effectAllowed: ', event.dataTransfer.effectAllowed)
   console.log('draggedItemId: ', event.dataTransfer.getData('draggedItemId'))
@@ -549,7 +549,8 @@ workspace.addEventListener('drop', (event) => {
   event.preventDefault()
   const element = document.getElementById(event.dataTransfer.getData('draggedItemId'))
   let newElement = null
-  if (event.dataTransfer.getData('sourceId') === 'score') {
+  let source = event.dataTransfer.getData('sourceId')
+  if (source === 'score') {
     newElement = score.drawNewPhrase(score.getPhrase(getIndexInDom(event.dataTransfer.getData('draggedItemId'))))
     workspace.appendChild(newElement)
   } else {
