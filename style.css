@@ -1,11 +1,4 @@
-/*
-#wholething {
-  display: grid;
-  grid-template-columns: 8px auto 8px;
-  grid-template-rows: 8px auto 12px;
-  grid-auto-flow: column;
-}
-*/
+
 
 :root {
   /* colors */
@@ -20,10 +13,6 @@
     --highlight-color: gainsboro;
     --white-color: whitesmoke;
     --contrast-color: lightgray;
-
-/* reference sizes */
-    --card-height: 200px;
-    --card-width: 300px;
 
     padding: 0;
     margin: 0;
@@ -40,11 +29,6 @@
   border-radius: 10px;
 }
 
-/* ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-} */
-
 body {
   height: 100%;
   overflow-y: hidden;
@@ -53,13 +37,13 @@ body {
 #header {
   text-align: center;
   grid-area: title;
-  color: var(--white-color);
+  color: var(--contrast-color);
 }
 
 #game {
   display: grid;
   grid-template-columns: 2fr 5fr 2fr 3fr;
-  grid-template-rows: 10vh 14.5vw 40vh 15vh;
+  grid-template-rows: 10vh 14.7vw 40vh 15vh;
   grid-template-areas:
   "title title title title"
   "info music music music"
@@ -93,10 +77,10 @@ body {
 
 #overflow {
   display: flex;
-  gap: 10px;
+  gap: 5px;
   grid-area: overflow;
   overflow-x: scroll;
-  padding: 10px 0;
+  padding: 5px;
   border-color: var(--highlight-color);
   border-style: solid;
   border-width: 3px;
@@ -107,15 +91,22 @@ body {
   grid-area: trash;
   background-color: var(--contrast-color);
   border-radius: 10px;
+  background-size: 40%;
+  background-position: center;
+  background-image: url(graphics/delete_FILL0_wght400_GRAD0_opsz48.svg);
+  background-origin: content-box;
+  background-repeat: no-repeat;
 }
 
 #score {
   grid-area: score;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   gap: 10px;
   border-radius: 10px;
-  padding: 3px;
+  height: 100%;
 }
 
 #playscore {
@@ -123,12 +114,7 @@ body {
   /* background-color: thistle; */
   /* width: 20px; */
   /* height: 20px; */
-  margin: auto;
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-left: 20px solid thistle;
-  border-bottom: 10px solid transparent;
+  width: 20%;
 }
 
 
@@ -153,12 +139,24 @@ body {
   'opsz' 48
 }
 
+.phrase {
+  display: grid;
+  grid-template-columns: repeat(4, 2fr);
+  align-items: center;
+  gap: .5%;
+  padding: .5%;
+  background-color: var(--button-color);
+  border-radius: 5px;
+}
+
 #phrase {
   width: 100%;
-
   background-color: var(--white-color);
   background-image: url(graphics/staff.svg);
-  background-repeat: round;
+  /* background-repeat: round; */
+  background-origin: content-box;
+  background-size: 100% 100%;
+  /* background-position: center; */
   /* background-image: url('data:image/svg+xml,\
   <svg height="200">\
   <line x1="0" x2="300" y1="40" y2="40" stroke="lightsteelblue" stroke-width="3"></line>\
@@ -169,6 +167,11 @@ body {
   </svg>') */
 }
 
+#addtoscore {
+  transform: rotate(90deg);
+  width: 20%;
+}
+
 #listcontrols {
   display: flex;
   flex-direction: column;
@@ -177,11 +180,6 @@ body {
   padding-top: 0.5em;
   padding-bottom: 1em;
 }
-
-.number-input {
-  font-size: 1.3em;
-}
-
 
 .card-control > * {
   opacity: 50%;
@@ -218,13 +216,13 @@ body {
 }
 
 :hover.top {
-  background: radial-gradient(ellipse at top, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%);
-  content: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
-  top: -80%;
-  left: 20%;
-  position: absolute;
-  width: 60%;
-  z-index: 10;
+  /* background: radial-gradient(ellipse at top, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: -14% 0;
+  padding: 0 26.5%;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
 .card-control > .right {
@@ -234,14 +232,14 @@ body {
 
 :hover.right {
   /* background: radial-gradient(ellipse at right, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
-  content: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
-  left: -100%;
-  position: absolute;
-  display: inline-block;
-  transform: rotate(90deg);
-  width: 270%;
-  z-index: 10;
-}
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: 0 -60%;
+  padding: 23.5% 0;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transform:rotate(90deg);
+  }
 
 .card-control > .bottom {
   grid-area: bottom;
@@ -250,12 +248,12 @@ body {
 
 :hover.bottom {
   /* background: radial-gradient(ellipse at bottom, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
-  content: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
-  top: -140%;
-  left: 20%;
-  position: absolute;
-  width: 60%;
-  z-index: 10;
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: -14% 0;
+  padding: 0 26.5%;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
 .card-control > .left {
@@ -265,13 +263,13 @@ body {
 
 :hover.left {
   /* background: radial-gradient(ellipse at left, skyblue 20%, rgba(70,159,252,0) 75%); */
-  content: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
-  left: -70%;
-  position: absolute;
-  display: inline-block;
-  transform: rotate(90deg);
-  width: 270%;
-  z-index: 10;
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: 0 -60%;
+  padding: 23.5% 0;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transform:rotate(90deg);
 }
 
 .card-control > .center {
@@ -281,11 +279,12 @@ body {
 
 :hover.center {
   /* background: radial-gradient(ellipse at center , rgba(135, 206, 235, 0.5) 30%, rgba(70,159,252,0) 70%); */
-  content: url(graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg);
-  top: -10%;
-  left: 10%;
-  position: absolute;
-  width: 70%;
+  background-image: url(graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg);
+  padding: 0 16.5%;
+  margin: -5% 0;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 
 }
 
@@ -300,7 +299,7 @@ svg {
   border-width: 3px;
   border-style: solid;
   border-radius: 10px;
-  padding: 0.5em;
+  padding: 4%;
 
   display: flex;
   grid-area: info;
@@ -310,13 +309,6 @@ svg {
   overflow-y: scroll;
 }
 
-
-.phrase {
-  display: grid;
-  grid-template-columns: repeat(4, 2fr);
-  align-items: center;
-  gap: 10px;
-  padding: 5px;
-  background-color: var(--button-color);
-  border-radius: 5px;
+.hidden {
+  display: none;
 }

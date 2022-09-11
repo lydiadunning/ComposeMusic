@@ -145,6 +145,7 @@ function dragOverHandler (event) {
   // } else
   console.log('in dragOverHandler, id starts with card:', event.currentTarget.id.startsWith('card'))
   if (event.target === event.currentTarget || event.target.parentElement.parentElement === event.currentTarget) {
+    console.log('in if gate within dragOverHandler')
     if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
       event.dataTransfer.dropEffect = 'move'
     } else if (event.dataTransfer.effectAllowed === 'move') {
@@ -158,6 +159,7 @@ function dragOverHandler (event) {
 
 // drop handling functions:
 function replacePhrase (replacementPhrase) {
+  phrase.music.forEach(measure => overflow.add(measure))
   phrase.rewrite(replacementPhrase)
   phraseInDom.rewrite(replacementPhrase)
 }
@@ -204,15 +206,23 @@ function dropHandler (event) {
   if (event.target !== event.currentTarget && event.target.parentElement.parentElement !== event.currentTarget) {
     return
   }
-  if (event.dataTransfer.getData('sourceId') === 'score' || draggedItemId.startsWith('phrase')) {
-    console.log('replace phrase')
-    replacePhrase(score.getPhrase(getIndexInDom(draggedItemId)))
-  } else if (event.dataTransfer.effectAllowed === 'copyMove' && event.currentTarget.id.startsWith('card')) {
+  const source = event.dataTransfer.getData('sourceId')
+  if (draggedItemId.startsWith('phrase')) {
+    if (source === 'score') {
+      console.log('replace phrase')
+      replacePhrase(score.getPhrase(getIndexInDom(draggedItemId)))
+    } else {
+      replacePhrase(score.readPhrase(document.getElementById(draggedItemId)))
+    }
+  } else if (source === 'phrase' && event.currentTarget.id.startsWith('card')) {
     console.log('move in phrase')
     moveInPhrase(getIndexInDom(draggedItemId), getIndexInDom(event.currentTarget.id))
   } else {
     console.log('not move in phrase')
     moveCardToPhrase(event.dataTransfer.getData('measure'), event, draggedItemId)
+  }
+  if (!addToScoreIcon.active && !phrase.hasSpace()) {
+    addToScoreIcon.activate()
   }
 }
 
@@ -308,19 +318,25 @@ const phrase = {
 const score = {
   phrases: [], // phrases here are lists of measures
   phraseId: 0,
+  maxLength: 4,
   parentElement: document.getElementById('score'),
   playElement: document.getElementById('playscore'),
   addPhrase: function (listOfMeasures) {
-    console.log('addPhrase')
-    console.log(this.phrases)
-    console.log(listOfMeasures)
-    this.phrases.push([...listOfMeasures]) // this notation creates a new array with the contents of listOfMeasures
-    this.drawPhraseToDom(listOfMeasures)
-    console.log(this.phrases)
+    if (this.phrases.length < this.maxLength) {
+      console.log('addPhrase')
+      console.log(this.phrases)
+      console.log(listOfMeasures)
+      this.phrases.push([...listOfMeasures]) // this notation creates a new array with the contents of listOfMeasures
+      this.drawPhraseToDom(listOfMeasures)
+      console.log(this.phrases)
+    }
   },
   removePhrase: function (id) {
-    this.phrases.splice(getIndexInDom(id), 1)
+    console.log('phrases before removal: ', this.phrases)
+    // subtracting one from the index to accomodate for icons
+    this.phrases.splice(getIndexInDom(id) - 1, 1)
     this.parentElement.removeChild(document.getElementById(id))
+    console.log('phrases after removal: ', this.phrases)
   },
   drawPhraseToDom: function (listOfMeasures) {
     const newPhrase = this.drawNewPhrase(listOfMeasures)
@@ -360,8 +376,33 @@ const score = {
   },
   getPhrase: function (index) {
     return this.phrases[index]
+  },
+  readPhrase: function (phraseElement) {
+    const measures = []
+    console.log('children: ', phraseElement.children)
+    const cards = Array.from(phraseElement.children)
+    cards.forEach(card => measures.push(card.dataset.measure))
+    return measures
+  },
+}
+
+function makeIconManager (iconId) {
+  return {
+    element: document.getElementById(iconId),
+    active: false,
+    activate: function () {
+      this.element.classList.remove('hidden')
+      this.active = true
+    },
+    deactivate: function () {
+      this.element.classList.add('hidden')
+      this.active = false
+    }
   }
 }
+
+const addToScoreIcon = makeIconManager('addtoscore')
+const playScoreIcon = makeIconManager('playscore')
 
 function cardClickHandler (event) {
   // console.log('cardClickHandler eventtarget: ', event.target.parentElement.parentElement)
@@ -510,8 +551,10 @@ showAllCards()
 const clearButton = document.getElementById('clear')
 clearButton.onclick = () => {
   // console.log('clear button clicked')
+  phrase.music.forEach(measure => overflow.add(measure))
   phrase.clear()
   phraseInDom.clear()
+  addToScoreIcon.deactivate()
 }
 
 const playAllButton = document.getElementById('playall')
@@ -522,11 +565,15 @@ playAllButton.onclick = () => {
 const addToScoreButton = document.getElementById('addtoscore')
 addToScoreButton.onclick = () => {
   score.addPhrase(phrase.music)
+  if (!playScoreIcon.active) {
+    playScoreIcon.activate()
+  }
 }
 
 const playScore = document.getElementById('playscore')
 playScore.onclick = () => {
   score.playAll()
+  console.log('all phrases in score', score.phrases)
 }
 
 let workid = 0
@@ -551,7 +598,10 @@ workspace.addEventListener('drop', (event) => {
   let newElement = null
   let source = event.dataTransfer.getData('sourceId')
   if (source === 'score') {
-    newElement = score.drawNewPhrase(score.getPhrase(getIndexInDom(event.dataTransfer.getData('draggedItemId'))))
+    // subtract one from index in dom to accomodate icons
+    const indexInDom = getIndexInDom(event.dataTransfer.getData('draggedItemId')) - 1
+    console.log('indexInDom', indexInDom)
+    newElement = score.drawNewPhrase(score.getPhrase(indexInDom))
     workspace.appendChild(newElement)
   } else {
     newElement = createCard(event.dataTransfer.getData('measure'), `work-${workid}`)
@@ -578,10 +628,17 @@ document.getElementById('trash').addEventListener('drop', (event) => {
     phrase.removeMeasure(index)
     phraseInDom.removeCard(index)
     overflow.add(event.dataTransfer.getData('measure'))
+    if (addToScoreIcon.active) {
+      addToScoreIcon.deactivate()
+    }
   } else if (sourceId === 'overflow') {
     overflow.remove(event.dataTransfer.getData('measure'))
   } else if (sourceId === 'score') {
+    console.log('phrases in score: ', score.phrases)
     score.removePhrase(event.dataTransfer.getData('draggedItemId'))
+    if (score.phrases.length === 0) {
+      playScoreIcon.deactivate()
+    }
   } else if (sourceId === 'workspace') {
     workspace.removeChild(document.getElementById(event.dataTransfer.getData('draggedItemId')))
     if (!event.dataTransfer.getData('draggedItemId').startsWith('phrase')) {
