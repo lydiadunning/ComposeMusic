@@ -29,10 +29,10 @@
       <div class="musicdisplay phrase" id="phrase">
         <!-- the composition appears here -->
       </div>
-      <div id='listcontrols'>
+      <div id='phrase-controls'>
         <!-- <button class="button" type="button" id="playall">Play<br>Phrase</button> -->
-        <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="playall">
-        <img src='graphics/delete_FILL0_wght400_GRAD0_opsz48.svg' id="clear">
+        <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="playall" class="icon">
+        <img src='graphics/delete_FILL0_wght400_GRAD0_opsz48.svg' id="clear" class="icon">
         <!-- <button class="button" type="button" id="clear">Clear<br>Phrase</button> -->
         <!-- <button class="button" type="button" id="addtoscore">Add To<br>Score</button> -->
         <button class="button" type="button" id="save" disabled hidden>Save<br>Phrase</button>
@@ -44,9 +44,11 @@
     </div>
     <div id="trash">
     </div>
-    <div id='score'>
-      <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="addtoscore" class="hidden">
-      <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="playscore" class="hidden">
+    <div id="score-area" class="score">
+      <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="addtoscore" class="icon hidden">
+      <div id="score" class="score">
+      </div>
+      <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="playscore" class="icon hidden">
     </div>
   </div>
 </body>

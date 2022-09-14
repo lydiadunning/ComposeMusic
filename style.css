@@ -3,30 +3,42 @@
 :root {
   /* colors */
     /* --background-color: #295D8A;
-    --button-color: lightblue;
-    --highlight-color: skyblue;
-    --white-color: white;
-    --contrast-color: steelblue; */
+    --contrast-color: lightblue;
+    --receding-color: skyblue;
+    --phrase-color: white;
+    --highlight-color: steelblue; */
 
     --background-color: white;
-    --button-color: thistle;
-    --highlight-color: gainsboro;
-    --white-color: whitesmoke;
-    --contrast-color: lightgray;
+    --contrast-color: thistle;
+    --receding-color: gainsboro;
+    --phrase-color: whitesmoke;
+    --highlight-color: lightgray;
 
+
+
+    /* --background-color: white;
+    --contrast-color: thistle;
+    --receding-color: black;
+    --phrase-color: whitesmoke;
+    --highlight-color: lightgray; */
+
+    color: var(--contrast-color);
     padding: 0;
     margin: 0;
 }
 
 ::-webkit-scrollbar {
-  background-color: var(--white-color);
+  background-color: var(--phrase-color);
   border-radius: 10px;
-  border: 2px solid var(--highlight-color);
+  border: 2px solid var(--receding-color);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--button-color);
+  border-color: black;
+  border-width: medium;
   border-radius: 10px;
+  border-style: solid;
+  background-color: var(--contrast-color);
 }
 
 body {
@@ -37,7 +49,7 @@ body {
 #header {
   text-align: center;
   grid-area: title;
-  color: var(--contrast-color);
+  color: var(--highlight-color);
 }
 
 #game {
@@ -57,7 +69,7 @@ body {
 
 #musicandcontrols {
   grid-area: music;
-  background-color: var(--contrast-color);
+  background-color: var(--highlight-color);
   border-radius: 10px;
   padding: 10px;
   display: flex;
@@ -68,8 +80,8 @@ body {
   grid-area: work;
   border-style: double;
   border-width: 8px;
-  border-color: var(--highlight-color);
-  background-color: var(--white-color);
+  border-color: var(--receding-color);
+  background-color: var(--phrase-color);
   border-radius: 10px;
   overflow: hidden;
   position: relative;
@@ -81,7 +93,7 @@ body {
   grid-area: overflow;
   overflow-x: scroll;
   padding: 5px;
-  border-color: var(--highlight-color);
+  border-color: var(--receding-color);
   border-style: solid;
   border-width: 3px;
   border-radius: 10px;
@@ -89,37 +101,41 @@ body {
 
 #trash {
   grid-area: trash;
-  background-color: var(--contrast-color);
+  background-color: var(--highlight-color);
   border-radius: 10px;
-  background-size: 40%;
+  background-size: min(50px, 20%);
   background-position: center;
   background-image: url(graphics/delete_FILL0_wght400_GRAD0_opsz48.svg);
   background-origin: content-box;
   background-repeat: no-repeat;
 }
 
-#score {
+#score-area {
   grid-area: score;
+}
+
+.score {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
   border-radius: 10px;
+  align-items: center;
+  gap: 10px;
   height: 100%;
+  width: 100%;
 }
 
-#playscore {
-  /* border-radius: 50%; */
-  /* background-color: thistle; */
-  /* width: 20px; */
-  /* height: 20px; */
-  width: 20%;
+#score {
+  justify-content: flex-start;
 }
 
+.icon {
+  width: 50px;
+}
 
 .button {
-  background-color: var(--button-color);
+  background-color: var(--contrast-color);
   font-size: 1rem;
   border-radius: 5px;;
   border: none;
@@ -128,7 +144,7 @@ body {
 
 
 :hover.button {
-  background: var(--highlight-color);
+  background: var(--receding-color);
 }
 
 .material-symbols-rounded {
@@ -145,13 +161,13 @@ body {
   align-items: center;
   gap: .5%;
   padding: .5%;
-  background-color: var(--button-color);
+  background-color: var(--contrast-color);
   border-radius: 5px;
 }
 
 #phrase {
   width: 100%;
-  background-color: var(--white-color);
+  background-color: var(--phrase-color);
   background-image: url(graphics/staff.svg);
   /* background-repeat: round; */
   background-origin: content-box;
@@ -169,16 +185,15 @@ body {
 
 #addtoscore {
   transform: rotate(90deg);
-  width: 20%;
+  /* width: 20%; */
 }
 
-#listcontrols {
+#phrase-controls {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-content: center;
-  padding-top: 0.5em;
-  padding-bottom: 1em;
+  padding-left: 5px;
 }
 
 .card-control > * {
@@ -295,7 +310,7 @@ svg {
 }
 
 #cardlist {
-  border-color: var(--contrast-color);
+  border-color: var(--highlight-color);
   border-width: 3px;
   border-style: solid;
   border-radius: 10px;
