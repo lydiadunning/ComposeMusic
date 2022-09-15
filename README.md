@@ -1,10 +1,10 @@
-# Make Some Music
+# Compose Music
 
-Make Some Music is a tool for exploring music composition.
+Compose Music is a tool for exploring music composition.
 
 ## Access
 
-Make Some Music runs in browser. It only works on desktop.
+Compose Music runs in browser. It only works on desktop.
 
 ## How To Use
 
@@ -16,5 +16,9 @@ added to a composition.
 
 Currently, this is a personal project.
 
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
+## Attribution
+
+Uses [band.js](https://github.com/meenie/band.js) to communicate with the [web audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
+Uses [Material Symbols](https://fonts.google.com/icons).
+
+All music was randomly generated.
