@@ -1,143 +1,178 @@
-/*
-#wholething {
-  display: grid;
-  grid-template-columns: 8px auto 8px;
-  grid-template-rows: 8px auto 12px;
-  grid-auto-flow: column;
-}
-*/
+
 
 :root {
-    --outline-color: steelblue;
-    --button-color: lightsteelblue;
-    --background-color: aliceblue;
-    --button-outline: #295D8A;
-  }
+  /* colors */
+    /* --background-color: #295D8A;
+    --contrast-color: lightblue;
+    --receding-color: skyblue;
+    --phrase-color: white;
+    --highlight-color: steelblue; */
 
-header {
-  text-align: center;
+    --background-color: white;
+    --contrast-color: thistle;
+    --receding-color: gainsboro;
+    --phrase-color: whitesmoke;
+    --highlight-color: lightgray;
+
+
+
+    /* --background-color: white;
+    --contrast-color: thistle;
+    --receding-color: black;
+    --phrase-color: whitesmoke;
+    --highlight-color: lightgray; */
+
+    color: var(--contrast-color);
+    padding: 0;
+    margin: 0;
+}
+
+::-webkit-scrollbar {
+  background-color: var(--phrase-color);
+  border-radius: 10px;
+  border: 2px solid var(--receding-color);
+}
+
+::-webkit-scrollbar-thumb {
+  border-color: black;
+  border-width: medium;
+  border-radius: 10px;
+  border-style: solid;
+  background-color: var(--contrast-color);
 }
 
 body {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+#header {
+  text-align: center;
+  grid-area: title;
+  color: var(--highlight-color);
+}
+
+#game {
+  display: grid;
+  grid-template-columns: 2fr 5fr 2fr 3fr;
+  grid-template-rows: 10vh 14.7vw 40vh 15vh;
+  grid-template-areas:
+  "title title title title"
+  "info music music music"
+  "info work work score"
+  "info overflow trash score";
+  background-color: var(--background-color);
+  gap: 15px;
+  font-family: 'Rubik', sans-serif;
+}
+
+
+#musicandcontrols {
+  grid-area: music;
+  background-color: var(--highlight-color);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+
+}
+
+#workspace {
+  grid-area: work;
+  border-style: double;
+  border-width: 8px;
+  border-color: var(--receding-color);
+  background-color: var(--phrase-color);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+#overflow {
+  display: flex;
+  gap: 5px;
+  grid-area: overflow;
+  overflow-x: scroll;
+  padding: 5px;
+  border-color: var(--receding-color);
+  border-style: solid;
+  border-width: 3px;
+  border-radius: 10px;
+}
+
+#trash {
+  grid-area: trash;
+  background-color: var(--highlight-color);
+  border-radius: 10px;
+  background-size: min(50px, 20%);
+  background-position: center;
+  background-image: url(graphics/delete_FILL0_wght400_GRAD0_opsz48.svg);
+  background-origin: content-box;
+  background-repeat: no-repeat;
+}
+
+#score-area {
+  grid-area: score;
+}
+
+.score {
   display: flex;
   flex-direction: column;
-  border-color: var(--outline-color);
-  border-width: 3px;
-  border-style: solid;
-}
-
-#controls {
-  background-color: var(--outline-color);
-
-}
-
-#primary {
-  height: 226px;
-  display: flex;
-  flex-direction: row
-}
-
-.side {
-  background-color: var(--background-color);
-  border-color: var(--outline-color);
-  border-width: 3px;
-  border-style: solid;
-  flex: 1;
-}
-
-#newcard {
-  /* height: 220px; */
-  background-color: var(--background-color);
-  display: flex;
-  flex-direction: row;
-  flex: 2;
-  /* margin-left: 25%;
-  margin-right: 25%; */
-  border-color: var(--outline-color);
-  border-width: 3px;
-  border-style: solid;
-}
-
-.accept {
-  display: flex;
-  flex-direction: column;
-  height: 220px;
-  width: 40%;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
+  border-radius: 10px;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+}
+
+#score {
+  justify-content: flex-start;
+}
+
+.icon {
+  width: 50px;
 }
 
 .button {
-  background-color: var(--button-color);
-  align-self: stretch;
-  border-color: var(--button-outline);
-  border-width: 3px;
-  border-style: solid;
+  background-color: var(--contrast-color);
   font-size: 1rem;
-  padding: 0.3em;
-  border-radius: 0.3em;
-
+  border-radius: 5px;;
+  border: none;
+  height: 2.2em;
 }
 
-#listcontrols .button {
-  width: 10em;
-}
 
 :hover.button {
-  font-weight: bold;
+  background: var(--receding-color);
 }
 
-#card-example-deck {
+.material-symbols-rounded {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+
+.phrase {
+  display: grid;
+  grid-template-columns: repeat(4, 2fr);
+  align-items: center;
+  gap: .5%;
+  padding: .5%;
+  background-color: var(--contrast-color);
+  border-radius: 5px;
+}
+
+#phrase {
   width: 100%;
-  height: 80%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5em;
-  background-color: var(--background-color);
-  align-content: space-around;
-  justify-content: center;
-}
-
-#example-title {
-  height: 20%;
-  text-align: center;
-  margin: 0;
-}
-
-.example-card {
-  padding: 0.3em;
-  border-bottom: solid 1px var(--button-color);
-  border-right:  solid 1px var(--button-color);
-  border-radius: 2px;
-}
-
-:hover.example-card {
-  background-color: var(--button-color);
-  cursor: default;
-  font-weight: bold;
-}
-
-#sample {
-  height: 220px;
-  min-width: 320px;
-  width: 40%;
-  background-color: inherit;
-  margin-left: 50px;
-}
-
-#cardnumber {
-  width: 2.5em;
-  font-size: 1em;
-}
-
-#display {
-  /* set width to the highest multiple of 320 that fits in display width */
-  display: flex;
-  flex-wrap: wrap;
-  min-height: 220px;
-  width = 100%
-  background-size: cover;
-  background-image: url(tryStuff.svg)
+  background-color: var(--phrase-color);
+  background-image: url(graphics/staff.svg);
+  /* background-repeat: round; */
+  background-origin: content-box;
+  background-size: 100% 100%;
+  /* background-position: center; */
   /* background-image: url('data:image/svg+xml,\
   <svg height="200">\
   <line x1="0" x2="300" y1="40" y2="40" stroke="lightsteelblue" stroke-width="3"></line>\
@@ -148,86 +183,147 @@ body {
   </svg>') */
 }
 
-#listcontrols {
-  width: 60%;
-  margin-left: 20%;
-  margin-right: 20%;
+#addtoscore {
+  transform: rotate(90deg);
+  /* width: 20%; */
+}
+
+#phrase-controls {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-content: center;
+  padding-left: 5px;
 }
 
-.number-input {
-  font-size: 1.3em;
+.card-control > * {
+  opacity: 50%;
 }
-
-
 
 .card {
-  margin: 10px;
-}
-
-.turn-card {
-  position: absolute;
-  opacity: 0;
-  font-size: 3rem;
-  font-weight: bold;
-}
-
-:hover.turn-card {
-  opacity: 30%;
-  color: var(--button-outline);
-}
-
-.card-control > .flip {
-  opacity: 50%;
+  font-size: 0; /*The card div will be the wrong size without this setting*/
+  aspect-ratio: 3 / 2;
+  /* height: var(--card-height); */
+  position: relative;
 }
 
 .card-control {
   position:absolute;
-  margin: 10px;
-  width: 300px;
-  height: 200px;
+  width: 100%;
+  height: auto;
+  /* width: var(--card-width); */
+  /* height: var(--card-height); */
   display: grid;
   grid-template-columns: 15% 70% 15%;
   grid-template-rows: 20% 60% 20%;
   grid-template-areas:
     ". top ."
-    "left . right"
+    "left center right"
     ". bottom .";
+  aspect-ratio: 3 / 2;
+
 }
 
 .card-control > .top {
   grid-area: top;
-  cursor: n-resize;
+  cursor: pointer;
+  position: relative;
 }
 
 :hover.top {
-  background: radial-gradient(ellipse at top, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+  /* background: radial-gradient(ellipse at top, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: -14% 0;
+  padding: 0 26.5%;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
 .card-control > .right {
   grid-area: right;
-  cursor: e-resize;
+  cursor: pointer;
 }
 
 :hover.right {
-  background: radial-gradient(ellipse at right, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
-}
+  /* background: radial-gradient(ellipse at right, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: 0 -60%;
+  padding: 23.5% 0;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transform:rotate(90deg);
+  }
 
 .card-control > .bottom {
   grid-area: bottom;
-  cursor: s-resize;
+  cursor: pointer;
 }
 
 :hover.bottom {
-  background: radial-gradient(ellipse at bottom, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+  /* background: radial-gradient(ellipse at bottom, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: -14% 0;
+  padding: 0 26.5%;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
 .card-control > .left {
   grid-area: left;
-  cursor: w-resize;
+  cursor: pointer;
 }
 
 :hover.left {
-  background: radial-gradient(ellipse at left, skyblue 15%, rgba(70,159,252,0.006061799719887961) 80%);
+  /* background: radial-gradient(ellipse at left, skyblue 20%, rgba(70,159,252,0) 75%); */
+  background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
+  margin: 0 -60%;
+  padding: 23.5% 0;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transform:rotate(90deg);
+}
+
+.card-control > .center {
+  grid-area: center;
+  cursor: grab;
+}
+
+:hover.center {
+  /* background: radial-gradient(ellipse at center , rgba(135, 206, 235, 0.5) 30%, rgba(70,159,252,0) 70%); */
+  background-image: url(graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg);
+  padding: 0 16.5%;
+  margin: -5% 0;
+  background-origin: content-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+}
+
+svg {
+  user-select: none;
+  height: 100%;
+  width: 100%;
+}
+
+#cardlist {
+  border-color: var(--highlight-color);
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 10px;
+  padding: 4%;
+
+  display: flex;
+  grid-area: info;
+  flex-direction: column;
+  gap: 10px;
+  align-content: space-around;
+  overflow-y: scroll;
+}
+
+.hidden {
+  display: none;
 }

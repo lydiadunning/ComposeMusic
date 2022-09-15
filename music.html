@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<head>
+    <title>Music</title>
+    <link rel="stylesheet" href="./style.css" type="text/css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+    <script defer src="./music.js"></script>
+    <script src="./band.js-master/dist/band.min.js"></script>
+    <script src="drawCards.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+
+<!--     <script defer src="./tryStuff.js"></script>  -->
+
+</head>
+<html>
+<body>
+    <div id="game">
+      <h1 id='header'>Make Some Music</h1>
+    <!-- <div id="info"> -->
+      <div id="cardlist">
+          <!-- a list of music cards appears here -->
+      </div>
+    <!-- </div> -->
+
+
+    <div id="musicandcontrols">
+      <div class="musicdisplay phrase" id="phrase">
+        <!-- the composition appears here -->
+      </div>
+      <div id='phrase-controls'>
+        <!-- <button class="button" type="button" id="playall">Play<br>Phrase</button> -->
+        <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="playall" class="icon">
+        <img src='graphics/delete_FILL0_wght400_GRAD0_opsz48.svg' id="clear" class="icon">
+        <!-- <button class="button" type="button" id="clear">Clear<br>Phrase</button> -->
+        <!-- <button class="button" type="button" id="addtoscore">Add To<br>Score</button> -->
+        <button class="button" type="button" id="save" disabled hidden>Save<br>Phrase</button>
+      </div>
+    </div>
+    <div id="workspace">
+    </div>
+    <div id='overflow'>
+    </div>
+    <div id="trash">
+    </div>
+    <div id="score-area" class="score">
+      <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="addtoscore" class="icon hidden">
+      <div id="score" class="score">
+      </div>
+      <img src="graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg" id="playscore" class="icon hidden">
+    </div>
+  </div>
+</body>
+</html>
