@@ -14,7 +14,7 @@
 // the card.
 const drawCard = (function () {
   // many constants, to simplify shifts in layout.
-  const COLOR = 'lightblue'
+  const COLOR = 'thistle'
   const CARD_WIDTH = '300'
   const CARD_HEIGHT = '200'
   const BLACK_NOTE_RADIUS = '9'
@@ -157,7 +157,7 @@ const drawCard = (function () {
     cardOutline.setAttribute('width', CARD_WIDTH)
     cardOutline.setAttribute('height', CARD_HEIGHT)
     cardOutline.setAttribute('fill', 'white')
-    cardOutline.setAttribute('stroke', 'lightblue')
+    cardOutline.setAttribute('stroke', COLOR)
     cardOutline.setAttribute('stroke-width', '5')
     cardOutline.setAttribute('rx', '15')
     return cardOutline
