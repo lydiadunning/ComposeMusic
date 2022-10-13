@@ -2,15 +2,14 @@
 
 Ditty is a tool for exploring music composition.
 
-## Access
-
-Ditty runs in browser. It only works on desktop.
-
-## How To Use
-
 Music appears on cards, which can be flipped over horizontally and vertically.
 Select cards and arrange them into four card sequences. These can be
 added to a composition.
+
+## Usage
+
+Hosted here: [https://lydiadunning.github.io/Ditty/](https://lydiadunning.github.io/Ditty/).
+Ditty runs in browser. It only works on desktop.
 
 ## Purpose
 
