@@ -22,7 +22,7 @@ const drawCard = (function () {
   const CIRCLE_STROKE_WIDTH = '4'
   const STEM_STROKE_WIDTH = '4'
   const X_AXES = [60, 120, 180, 240]
-  const X_AXIS_Q_OFFSET = 15
+  const X_AXIS_E_OFFSET = 15
   const STEM_LENGTH = 65
   const STEM_ADJUST = 7
   const COLUMNS = ['30', '90', '150', '210', '270']
@@ -31,13 +31,26 @@ const drawCard = (function () {
   // the VISUAL_STAFF represents the y axes of notes.
   const VISUAL_STAFF = [160, 145, 130, 115, 100, 85, 70, 55, 40]
 
+  // a function to set attributes of an svg component.
+  // the attributes parameter expects an object
+  function makeSvgWithAttributes (type, attributes) {
+    newSvgElement = document.createElementNS('http://www.w3.org/2000/svg', type)
+    Object.keys(attributes).forEach(key => newSvgElement.setAttribute(key, attributes[key]))
+    return newSvgElement
+  }
+
+  // debug. places a red dot in the given location.
   function debugDot (x, y) {
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    circle.setAttribute('cx', x)
-    circle.setAttribute('cy', y)
-    circle.setAttribute('r', '1')
-    circle.setAttribute('fill', 'red')
-    circle.setAttribute('stroke-color', 'red')
+    return makeSvgWithAttributes(
+      'circle',
+      {
+        'cx': x,
+        'cy': y,
+        'r': '1',
+        'fill': 'red',
+        'stroke-color': 'red',
+      }
+    )
   }
 
   // returns the y axis for the top of a note's stem.
@@ -61,46 +74,59 @@ const drawCard = (function () {
   }
 
   function drawStem (x, y, stemUp) {
-    debugDot(x, y)
     const yStemEnd = stemAdjustY(y, stemUp, STEM_LENGTH)
     const yStemStart = stemAdjustY(y, stemUp, 0)
-    const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-    stem.setAttribute('x1', x)
-    stem.setAttribute('x2', x)
-    stem.setAttribute('y1', yStemStart)
-    stem.setAttribute('y2', yStemEnd)
-    stem.setAttribute('stroke', 'black')
-    stem.setAttribute('stroke-width', STEM_STROKE_WIDTH)
-    stem.setAttribute('stroke-linecap', 'round')
-
-    return stem
+    return makeSvgWithAttributes(
+      'line', 
+      {
+        'x1': x,
+        'x2': x, 
+        'y1': yStemStart, 
+        'y2': yStemEnd, 
+        'stroke': 'black',
+        'stroke-width': STEM_STROKE_WIDTH,
+        'stroke-linecap': 'round'
+      }
+    )
   }
 
   function drawNotehead (x, y, type) {
-    // console.log(y)
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    circle.setAttribute('cx', x)
-    circle.setAttribute('cy', y)
+    const coords = {'cx': x, 'cy': y}
     if (type === 'half') {
-      circle.setAttribute('r', HALF_NOTE_RADIUS)
-      circle.setAttribute('fill', 'transparent')
-      circle.setAttribute('stroke', 'black')
-      circle.setAttribute('stroke-width', CIRCLE_STROKE_WIDTH)
+      return makeSvgWithAttributes(
+        'circle',
+        {
+          'r': HALF_NOTE_RADIUS,
+          'fill': 'transparent',
+          'stroke': 'black',
+          'stroke-width': CIRCLE_STROKE_WIDTH,
+          ...coords
+        }
+      )
+        
     } else {
-      circle.setAttribute('r', BLACK_NOTE_RADIUS)
-      circle.setAttribute('fill', 'black')
+      return makeSvgWithAttributes(
+        'circle',
+        {
+          'r': BLACK_NOTE_RADIUS,
+          'fill': 'black',
+          ...coords
+        }
+      )
     }
-    return circle
   }
 
   function drawBeam (x1, x2, y1, y2, yStemEnd1, yStemEnd2) {
-    const beam = document.createElementNS('http://www.w3.org/2000/svg', 'polyline')
-    beam.setAttribute('points', `${x1},${y1} ${x1},${yStemEnd1} ${x2},${yStemEnd2} ${x2},${y2}`)
-    beam.setAttribute('fill', 'none')
-    beam.setAttribute('stroke', 'black')
-    beam.setAttribute('stroke-width', STEM_STROKE_WIDTH)
-    beam.setAttribute('stroke-linejoin', 'round')
-    return beam
+    return makeSvgWithAttributes(
+      'polyline',
+      {
+        'points': `${x1},${y1} ${x1},${yStemEnd1} ${x2},${yStemEnd2} ${x2},${y2}`,
+        'fill': 'none',
+        'stroke': 'black',
+        'stroke-width': STEM_STROKE_WIDTH,
+        'stroke-linejoin': 'round',
+      }
+    )
   }
 
   function drawEighthNotePair (loc1, loc2, stemUp) {
@@ -124,13 +150,17 @@ const drawCard = (function () {
   function drawStaff () {
     const staff = []
     for (let i = 0; i < 5; i++) { // There will always be five lines on a staff.
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-      line.setAttribute('x1', '0')
-      line.setAttribute('x2', CARD_WIDTH)
-      line.setAttribute('y1', STAFF_LINES[i])
-      line.setAttribute('y2', STAFF_LINES[i])
-      line.setAttribute('stroke', COLOR)
-      line.setAttribute('stroke-width', STAFF_STROKE_WIDTH)
+      const line = makeSvgWithAttributes(
+        'line',
+        {
+          'x1': '0',
+          'x2': CARD_WIDTH,
+          'y1': STAFF_LINES[i],
+          'y2': STAFF_LINES[i],
+          'stroke': COLOR,
+          'stroke-width': STAFF_STROKE_WIDTH,
+        }
+      )
       staff.push(line)
     }
     return staff
@@ -139,33 +169,39 @@ const drawCard = (function () {
   function drawColumns () {
     const columns = []
     for (let i = 0; i < 5; i++) {
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-      line.setAttribute('x1', COLUMNS[i])
-      line.setAttribute('x2', COLUMNS[i])
-      line.setAttribute('y1', 0)
-      line.setAttribute('y2', CARD_HEIGHT)
-      line.setAttribute('stroke', COLOR)
-      line.setAttribute('stroke-dasharray', '3, 5')
+      const line = makeSvgWithAttributes(
+        'line',
+        {
+          'x1': COLUMNS[i],
+          'x2': COLUMNS[i],
+          'y1': 0,
+          'y2': CARD_HEIGHT,
+          'stroke': COLOR,
+          'stroke-dasharray': '3, 5',
+        }
+      )
       columns.push(line)
     }
     return columns
   }
 
   function drawCardOutline () {
-    const cardOutline = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    cardOutline.setAttribute('width', CARD_WIDTH)
-    cardOutline.setAttribute('height', CARD_HEIGHT)
-    cardOutline.setAttribute('fill', 'white')
-    cardOutline.setAttribute('stroke', COLOR)
-    cardOutline.setAttribute('stroke-width', '5')
-    cardOutline.setAttribute('rx', '15')
-    return cardOutline
+    return makeSvgWithAttributes(
+      'rect',
+      {
+        'width': CARD_WIDTH,
+        'height': CARD_HEIGHT,
+        'fill': 'white',
+        'stroke': COLOR,
+        'stroke-width': '5',
+        'rx': '15',
+      }
+    )
   }
 
   // drawAllNotes iterates through notes from the cardNotes array, calling
   // functions to create svg elements for each part of each note
   function drawAllNotes (cardNotes) {
-    // console.log(cardNotes)
     const drawnNotes = []
     let noteCount = 0
     // loops through quarter note sized chunks, 4 to a card
@@ -176,11 +212,10 @@ const drawCard = (function () {
       let stemUp = currentNote.pitch < 4 // boolean- false for notes on top of staff
       const duration = currentNote.duration
       if (duration === 'eighth') {
-        const xAxis1 = xAxis - X_AXIS_Q_OFFSET
-        // increments noteCount twice to draw two eighth notes
-        // instead of one quarter note.
+        const xAxis1 = xAxis - X_AXIS_E_OFFSET
+        // increments noteCount to draw two eighth notes
         noteCount++
-        const xAxis2 = xAxis + X_AXIS_Q_OFFSET
+        const xAxis2 = xAxis + X_AXIS_E_OFFSET
         const secondNote = cardNotes[noteCount].pitch
         const yAxis2 = VISUAL_STAFF[secondNote]
         if (Math.abs(4 - currentNote.pitch) < Math.abs(4 - secondNote)) {
@@ -198,36 +233,32 @@ const drawCard = (function () {
           y: yAxis2.toString()
         },
         stemUp))
-        noteCount++
-      } else if (duration === 'half') {
-        drawnNotes.push(drawHalfOrQuarterNote({
-          x: xAxis.toString(),
-          y: yAxis.toString()
-        }, duration, stemUp))
-        // increments noteCount and i, draws one half not instead of
-        // two quarter notes
-        noteCount++
-        i++
       } else {
         drawnNotes.push(drawHalfOrQuarterNote({
           x: xAxis.toString(),
           y: yAxis.toString()
         }, duration, stemUp))
-        // increments noteCount by 1 for one quarter note.
-        noteCount++
+        if (duration === 'half') {
+          i++
+        }
       }
+      noteCount++
     }
     return drawnNotes.flat()
   }
 
   // DEBUG - remove
   function drawNumber (cardNumber) {
-    const number = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-    number.setAttribute('x', '10')
-    number.setAttribute('y', '20')
-    number.setAttribute('fill', 'black')
-    number.setAttribute('font-family', 'Courier')
-    number.setAttribute('font-weight', 'bold')
+    const number = makeSvgWithAttributes(
+      'text',
+      {
+        'x': '10',
+        'y': '20',
+        'fill': 'black',
+        'font-family': 'Courier',
+        'font-weight': 'bold',
+      }
+    )
     number.textContent = cardNumber
     return number
   }
@@ -237,12 +268,14 @@ const drawCard = (function () {
   return (cardNumber, cardNotes) => {
     // Get the card's number.
     // write the card's number on the card
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-
-    svg.setAttribute('width', CARD_WIDTH)
-    svg.setAttribute('height', CARD_HEIGHT)
-    // svg.setAttribute('viewbox', `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`)
-    svg.setAttribute('viewBox', '0 0 300 200')
+    const svg = makeSvgWithAttributes(
+      'svg',
+      {
+        'width': CARD_WIDTH,
+        'height': CARD_HEIGHT,
+        'viewBox': `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`
+      }
+    )
     const svgComponents = [
       drawCardOutline(),
       drawNumber(cardNumber),
