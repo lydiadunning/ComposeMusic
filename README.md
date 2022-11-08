@@ -20,4 +20,5 @@ Currently, this is a personal project.
 Uses [band.js](https://github.com/meenie/band.js) to communicate with the [web audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
 Uses [Material Symbols](https://fonts.google.com/icons).
 
+Inspired by the discontinued Gamewright game Compose Yourself.
 All music was randomly generated.
