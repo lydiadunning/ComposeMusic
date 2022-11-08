@@ -23,7 +23,6 @@ const drawCard = (function () {
   const STEM_STROKE_WIDTH = '4'
   const X_AXES = [60, 120, 180, 240]
   const X_AXIS_Q_OFFSET = 15
-  const X_AXIS_H_OFFSET = 30
   const STEM_LENGTH = 65
   const STEM_ADJUST = 7
   const COLUMNS = ['30', '90', '150', '210', '270']
@@ -201,7 +200,6 @@ const drawCard = (function () {
         stemUp))
         noteCount++
       } else if (duration === 'half') {
-        xAxis += X_AXIS_H_OFFSET
         drawnNotes.push(drawHalfOrQuarterNote({
           x: xAxis.toString(),
           y: yAxis.toString()
