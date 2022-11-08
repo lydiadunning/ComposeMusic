@@ -2,25 +2,11 @@
 
 :root {
   /* colors */
-    /* --background-color: #295D8A;
-    --contrast-color: lightblue;
-    --receding-color: skyblue;
-    --phrase-color: white;
-    --highlight-color: steelblue; */
-
     --background-color: white;
     --contrast-color: thistle;
     --receding-color: gainsboro;
     --phrase-color: whitesmoke;
     --highlight-color: lightgray;
-
-
-
-    /* --background-color: white;
-    --contrast-color: thistle;
-    --receding-color: black;
-    --phrase-color: whitesmoke;
-    --highlight-color: lightgray; */
 
     color: var(--contrast-color);
     padding: 0;
@@ -166,30 +152,20 @@ body {
   background-color: var(--contrast-color);
   border-radius: 5px;
   font-size: 0; /*The card div will be the wrong size without this setting*/
-
 }
 
 #phrase {
   width: 100%;
   background-color: var(--phrase-color);
   background-image: url(graphics/staff.svg);
-  /* background-repeat: round; */
   background-origin: content-box;
   background-size: 100% 100%;
-  /* background-position: center; */
-  /* background-image: url('data:image/svg+xml,\
-  <svg height="200">\
-  <line x1="0" x2="300" y1="40" y2="40" stroke="lightsteelblue" stroke-width="3"></line>\
-  <line x1="0" x2="300" y1="70" y2="70" stroke="lightsteelblue" stroke-width="3"></line>\
-  <line x1="0" x2="300" y1="100" y2="100" stroke="lightsteelblue" stroke-width="3"></line>\
-  <line x1="0" x2="300" y1="130" y2="130" stroke="lightsteelblue" stroke-width="3"></line>\
-  <line x1="0" x2="300" y1="160" y2="160" stroke="lightsteelblue" stroke-width="3"></line>\
-  </svg>') */
+  gap: 5px;
+  padding: 5px;
 }
 
 #addtoscore {
   transform: rotate(90deg);
-  /* width: 20%; */
 }
 
 #phrase-controls {
@@ -258,6 +234,7 @@ body {
   background-size: 100% 100%;
   background-repeat: no-repeat;
   transform:rotate(90deg);
+  z-index: 5;
   }
 
 .card-control > .bottom {
