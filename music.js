@@ -9,6 +9,8 @@ const STAFF = ['line1', 'space1', 'line2', 'space2', 'line3', 'space3', 'line4',
 // CMAJOR lists the pitch of notes from STAFF in the key C Major
 const CMAJOR = ['E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5'] // input for band.js
 
+// strings in measures contain a series of notes
+// each two-character note encodes the note's place on the staff and duration.
 const measures = [
   '1q2q3q4q',
   '2h6q5q',
@@ -46,19 +48,22 @@ const measures = [
 
 const measureInterpreter = {
   noteCodeLength: 2,
+  // flips the measure horizontally
   fliph: function (measure) {
     const lastNoteCodeIndex = -1 * this.noteCodeLength
     let hFlippedMeasure = ''
     while (measure) {
       hFlippedMeasure = hFlippedMeasure.concat(measure.slice(lastNoteCodeIndex))
       measure = measure.substring(0, measure.length - this.noteCodeLength)
+      
     }
     return hFlippedMeasure
   },
+  // flips the measure vertically
   flipv: function (measure) {
     // console.log(measure)
     let newString = ''
-    for (let note = 0; note < measure.length; note += 2) {
+    for (let note = 0; note < measure.length; note += this.noteCodeLength) {
       const newPitch = STAFF.length - parseInt(measure[note]) - 1
       newString = newString.concat(newPitch.toString(), measure[note + 1])
     }
@@ -75,7 +80,7 @@ const measureInterpreter = {
   getNotes: function (measure) {
     // console.log("getNotes string: ", measure)
     const notes = []
-    for (let note = 0; note < measure.length; note += 2) {
+    for (let note = 0; note < measure.length; note += this.noteCodeLength) {
       notes.push(
         {
           pitch: parseInt(measure[note]),
@@ -92,7 +97,7 @@ const measureInterpreter = {
 
 // plays sequences of music by interfacing with band.js
 // the callback is present as a reminder that it might be used to
-// play music in succession.car
+// play music in succession.
 function play (notes /*, callback = () => {} */) {
   // accepts a list of notes formatted to play and an optional callback function
   var conductor = new window.BandJS()
@@ -108,7 +113,7 @@ function play (notes /*, callback = () => {} */) {
 }
 
 
-
+// Utility function for debugging.
 function checkPhraseConsistency () {
   const virtualMusic = phrase.music
   const phraseInDom = document.getElementById('phrase').children
@@ -250,7 +255,8 @@ function dropHandler (event) {
     } else {
       replacePhrase(score.readPhrase(document.getElementById(draggedItemId)))
     }
-  } else if (source === 'phrase' && event.currentTarget.id.startsWith('card')) {
+  // } else if (source === 'phrase' && event.currentTarget.id.startsWith('card')) {
+  } else if (source === 'phrase' && event.currentTarget.parentElement.id == 'phrase') {
     //console.log('move in phrase')
     moveInPhrase(getIndexInDom(draggedItemId), getIndexInDom(event.currentTarget.id))
   } else {
@@ -445,7 +451,6 @@ function cardClickHandler (event) {
   const cardTarget = event.target.parentElement.parentElement
   const operation = event.target.dataset.op
   const measure = cardTarget.dataset.measure
-  const style = cardTarget.getAttribute('style')
   let newMeasure = ''
   // console.log('cardClickHandler operation: ', operation)
   if (operation === 'play') {
@@ -459,6 +464,7 @@ function cardClickHandler (event) {
     console.log('Something has gone wrong with dataset.op in cardClickHandler')
     return
   }
+  const style = cardTarget.getAttribute('style')
   const parent = cardTarget.parentElement
   if (parent.id === 'phrase') {
     const index = getIndexInDom(cardTarget.id)
@@ -509,7 +515,7 @@ function createCard (measure, id, simple = null) {
   if (!simple) {
     card.appendChild(addCardControl())
   }
-  card.appendChild(drawCard(measure, measureInterpreter.getNotes(measure)))
+  card.appendChild(drawCard(measureInterpreter.getNotes(measure)))
   // console.log(cardHolder.dataset.cardnumber)
   card.addEventListener('dragstart', dragStartHandler)
   return card
@@ -581,7 +587,6 @@ function showAllCards () {
     newCard.dataset.measure = measure
     cardDisplay.appendChild(newCard)
   })
-  return document.getElementsByClassName('example-card')
 }
 showAllCards()
 

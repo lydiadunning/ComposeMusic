@@ -294,7 +294,7 @@ svg {
   border-color: var(--highlight-color);
   border-width: 3px;
   border-style: solid;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 4%;
 
   display: flex;

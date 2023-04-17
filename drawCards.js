@@ -19,12 +19,11 @@ const drawCard = (function () {
   const CARD_HEIGHT = '200'
   const BLACK_NOTE_RADIUS = '9'
   const HALF_NOTE_RADIUS = '7'
-  const CIRCLE_STROKE_WIDTH = '4'
-  const STEM_STROKE_WIDTH = '4'
+  const CIRCLE_STROKE_WIDTH = STEM_STROKE_WIDTH = '4'
   const X_AXES = [60, 120, 180, 240]
-  const X_AXIS_E_OFFSET = 15
+  const X_AXIS_E_OFFSET = 15 // distance eighth note pairs shift from center.
   const STEM_LENGTH = 65
-  const STEM_ADJUST = 7
+  const NOTE_SIDE = 7
   const COLUMNS = ['30', '90', '150', '210', '270']
   const STAFF_LINES = ['40', '70', '100', '130', '160']
   const STAFF_STROKE_WIDTH = '3'
@@ -67,9 +66,9 @@ const drawCard = (function () {
   // returns the x axis on the side of a note
   function stemAdjustX (x, stemUp) {
     if (stemUp) {
-      return (parseFloat(x) + STEM_ADJUST).toString()
+      return (parseFloat(x) + NOTE_SIDE).toString()
     } else {
-      return (parseFloat(x) - STEM_ADJUST).toString()
+      return (parseFloat(x) - NOTE_SIDE).toString()
     }
   }
 
@@ -248,37 +247,35 @@ const drawCard = (function () {
   }
 
   // DEBUG - remove
-  function drawNumber (cardNumber) {
-    const number = makeSvgWithAttributes(
-      'text',
-      {
-        'x': '10',
-        'y': '20',
-        'fill': 'black',
-        'font-family': 'Courier',
-        'font-weight': 'bold',
-      }
-    )
-    number.textContent = cardNumber
-    return number
-  }
+  // function drawNumber (cardNumber) {
+  //   const number = makeSvgWithAttributes(
+  //     'text',
+  //     {
+  //       'x': '10',
+  //       'y': '20',
+  //       'fill': 'black',
+  //       'font-family': 'Courier',
+  //       'font-weight': 'bold',
+  //     }
+  //   )
+  //   number.textContent = cardNumber
+  //   return number
+  // }
 
   // drawCard calls all of the other functions for creating svg elements
   // and combines them into an svg.
-  return (cardNumber, cardNotes) => {
-    // Get the card's number.
-    // write the card's number on the card
+  return (cardNotes) => {
     const svg = makeSvgWithAttributes(
       'svg',
       {
-        'width': CARD_WIDTH,
-        'height': CARD_HEIGHT,
+        // 'width': CARD_WIDTH,
+        // 'height': CARD_HEIGHT,
         'viewBox': `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`
       }
     )
     const svgComponents = [
       drawCardOutline(),
-      drawNumber(cardNumber),
+      // drawNumber(cardNumber),
       drawColumns(),
       drawStaff(),
       drawAllNotes(cardNotes)
@@ -287,3 +284,4 @@ const drawCard = (function () {
     return svg
   }
 })()
+
