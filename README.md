@@ -26,7 +26,7 @@ All music was randomly generated.
 
 ### Javascript
 #### [Building SVGs with Javascript](./SkillsUsed.md#svg-js)
-#### [IIFE] ("./SkillsUsed.md#iife)
+#### [IIFE] (./SkillsUsed.md#iife)
 #### [Drag and Drop](./SkillsUsed.md#drag-drop)
 #### [DOM Manipulation](./SkillsUsed.md#dom)
 
