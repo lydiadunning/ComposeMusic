@@ -1,4 +1,7 @@
 # Skills Used
+
+[HTML Data Attributes](#HTML-Data-Attributes) [Building SVGs with Javascript](#Building-SVGs-with-Javascript) [IIFE](#iife) [Drag and Drop](#drag-and-drop) [DOM Manipulation](#dom-manipulation) [Refactoring](#refactoring)
+
 ## HTML Data Attributes
 ### What
 HTML data attributes store a string as data in the HTML. This app uses data attributes to store a representation of the music on each card (the measure), and to store information about what happens if a user clicks on a particular part of a card.
