@@ -21,14 +21,14 @@ All music was randomly generated.
 ## Skills Used
 
 ### Advanced HTML
-#### [HTML Data Attributes](./SkillsUsed.md#data-attributes)
-#### [Drag and Drop](./SkillsUsed.md#drag-drop)
+#### [HTML Data Attributes](./SkillsUsed.md#HTML-Data-Attributes)
+#### [Drag and Drop](./SkillsUsed.md#Drag-and-Drop)
 
 ### Javascript
-#### [Building SVGs with Javascript](./SkillsUsed.md#svg-js)
-#### [IIFE] ("./SkillsUsed.md#iife)
-#### [Drag and Drop](./SkillsUsed.md#drag-drop)
-#### [DOM Manipulation](./SkillsUsed.md#dom)
+#### [Building SVGs with Javascript](./SkillsUsed.md#Building-SVGs-with-Javascript)
+#### [IIFE]("./SkillsUsed.md#iife)
+#### [Drag and Drop](./SkillsUsed.md#drag-and-drop)
+#### [DOM Manipulation](./SkillsUsed.md#dom-manipulation)gi
 
 ### Programming
 #### [Refactoring](./SkillsUsed.md#refactoring)

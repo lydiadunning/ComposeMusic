@@ -1,5 +1,5 @@
 # Skills Used
-## HTML Data Attributes {#data-attributes}
+## HTML Data Attributes
 ### What
 HTML data attributes store a string as data in the HTML. This app uses data attributes to store a representation of the music on each card (the measure), and to store information about what happens if a user clicks on a particular part of a card.
 
@@ -57,7 +57,7 @@ The operation data determines what should happen to the measure data. The flipv 
 measureInterpreter.getNotes converts the measure into an object, which the play function uses to play music.
 
 
-## DOM Manipulation {#dom-manipulation}
+## DOM Manipulation 
 ### What
 This project writes to and reads from the HTML document using the Document Object Model, and also navigates the DOM to make sense of events during user interactions. 
 
@@ -96,7 +96,7 @@ function cardClickHandler (event) {
 First, cardTarget identifies which card was clicked, the target's parent's parent. The click target has an op data attribute, and the cardTarget has a measure data attribute, which are used to identify which operation comes next (play) and what measure needs to be converted into the correct format and sent to the play function.
 
 
-## Building SVGs with Javascript {#svg-js}
+## Building SVGs with Javascript 
 ### What
 This app displays cards with musical notes in any number of orientations. I chose to draw these notes by using javascript to generate SVG images and add them to the DOM.
 
@@ -176,7 +176,7 @@ And what does that function look like?
 ```
 It goes on and on, repeatedly modifying the x and y axis values by constant amounts as determined by variables and using the new values to draw the shapes of notes. Ultimately, each component of each note is created using the makeSvgWithAttributes function and added to the SVG.
 
-## Drag and Drop {#drag-drop}
+## Drag and Drop 
 ### What
 I based this project on a piece of discontinued software that didn't, as far as I know, feature drag and drop functionality. Cards, though, are moved around, and drag and drop works for moving elements around a screen.
 I could have implemented a tool to execute drag and drop for me, but I wanted to learn how it works.
@@ -228,7 +228,7 @@ if (source === 'phrase' && event.currentTarget.parentElement.id == 'phrase') {
 If a card element was dragged from the phrase to a card which is a child of the phrase, the cards are made to change location by executing the moveInPhrase function. Otherwise, the relevant card is moved to the phrase. The moveCardToPhrase manages all the work of determining whether to move or re-draw a card, and whether to remove the dragged element from its original location.
 
 
-## IIFE {#iife}
+## IIFE 
 ### What
 Uses an immediately invoked function expression (IIFE) to draw svgs which appear as cards in the DOM. An IIFE is a function that runs as soon as it is defined. This means that when I call the IIFE, it returns a function and runs that function, which returns an SVG.
 ### Why
@@ -265,7 +265,7 @@ const drawCard = (function () {
 ```
 The arrow function has one parameter, which is provided in the function call to the IIFE.
 
-## Refactoring {#refactoring}
+## Refactoring 
 ### What
 When I first created this project, each measure was an object. Then I implemented a drag and drop interface. Data attributes seemed ideal to keep track of which notes were on which card, so I came up with a way of encoding the measure in a string. Using strings in place of objects made the entire project simpler to execute and understand. This justified refactoring the project to store data in a simpler way. However, I saved myself a little work by converting the string into an object instead of rewriting the functions for playing music and creating SVGs.
 ### Why
