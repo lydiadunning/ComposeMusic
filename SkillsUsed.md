@@ -4,7 +4,7 @@
 ### What
 HTML data attributes store a string as data in the HTML. This app uses data attributes to store a representation of the music on each card (the measure), and to store information about what happens if a user clicks on a particular part of a card.
 
-### Why
+### Why [link to data attributes](#HTML-Data-Attributes)
 Since each card in the HTML knows about itself, the app can ask cards for information.
 - It's an idiomatic way for HTML and javascript to communicate.
 - Accessing data attributes suits built in drag and drop operations. The data is stored in each event target's data attribute. Easy.
