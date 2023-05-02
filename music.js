@@ -95,10 +95,28 @@ const measureInterpreter = {
   }
 }
 
+const tone = new Tone
+
+const playWithTone = (notes) => {
+  
+  //create a synth and connect it to the main output (your speakers)
+  const synth = new tone.Synth().toDestination();
+  const part = new tone.Part((note, duration) => {
+    const type = duration == 'half' ? "2n" :
+                             'quarter' ? "4n" :
+                             "8n"
+    synth.triggerAttackRelease(note, type)
+  })
+
+}
+
+
 // plays sequences of music by interfacing with band.js
 // the callback is present as a reminder that it might be used to
 // play music in succession.
 function play (notes /*, callback = () => {} */) {
+  playWithTone(notes)
+  return
   // accepts a list of notes formatted to play and an optional callback function
   var conductor = new window.BandJS()
   conductor.setTimeSignature(4, 4)
