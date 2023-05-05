@@ -61,7 +61,6 @@ const measureInterpreter = {
   },
   // flips the measure vertically
   flipv: function (measure) {
-    // console.log(measure)
     let newString = ''
     for (let note = 0; note < measure.length; note += this.noteCodeLength) {
       const newPitch = STAFF.length - parseInt(measure[note]) - 1
@@ -76,6 +75,34 @@ const measureInterpreter = {
       case 'e': return 'eighth'
       default: throw new Error('not a valid duration: ', duration)
     }
+  },
+  interpretDurationForTone: function (duration) {
+    console.log(duration)
+    switch (duration) {
+      case 'h': return '2n'
+      case 'q': return '4n'
+      case 'e': return '8n'
+      default: throw new Error('not a valid duration: ', duration)
+    }
+  },
+  getNotesForTone: function (measure) {
+    console.log(Tone.context.state)
+    const notes = []
+    let delay =  0
+    for (let note = 0; note < measure.length; note += this.noteCodeLength) {
+      const pitch = CMAJOR[parseInt(measure[note])]
+      const duration = this.interpretDurationForTone(measure[note + 1])
+      delay += duration == '8n' ? .5 
+                         : '4n' ? 1
+                         : 1.5 
+      notes.push([pitch, duration, delay])
+    }
+    console.log(notes)
+    return notes;
+    /*   
+    synth.triggerAttackRelease("C4", "8n", now)
+    synth.triggerAttackRelease("E4", "2n", now + .25)
+    synth.triggerAttackRelease("G4", "2n", now + 1.25) */
   },
   getNotes: function (measure) {
     // console.log("getNotes string: ", measure)
@@ -95,18 +122,34 @@ const measureInterpreter = {
   }
 }
 
-const tone = new Tone
 
 const playWithTone = (notes) => {
-  
+  console.log('play with Tone')
+  console.log(Tone.context.state)
+
   //create a synth and connect it to the main output (your speakers)
-  const synth = new tone.Synth().toDestination();
-  const part = new tone.Part((note, duration) => {
-    const type = duration == 'half' ? "2n" :
-                             'quarter' ? "4n" :
-                             "8n"
-    synth.triggerAttackRelease(note, type)
+  console.log(notes)
+  const synth = new Tone.Synth().toDestination();
+  const now = Tone.now()
+  // const part = new Tone.Part((note, duration) => {
+  //   const type = duration == 'half' ? "2n" :
+  //                            'quarter' ? "4n" :
+  //                            "8n"
+  //   synth.triggerAttackRelease(note, type)
+  // })
+  // const notesForTone = measureInterpreter.getNotesForTone(notes)
+  // console.log(notesForTone)
+  console.log(notes[0])
+  synth.triggerAttackRelease(notes[0])
+  console.log(Tone.context.state)
+  const notesToPlay = notes.forEach(note => {
+    console.log(Tone.context.state)
+    note[2] += now
+    synth.triggerAttackRelease(...note)
   })
+  // synth.triggerAttackRelease("C4", "8n", now)
+  // synth.triggerAttackRelease("E4", "2n", now + .25)
+  // synth.triggerAttackRelease("G4", "2n", now + 1.25)
 
 }
 
@@ -472,7 +515,22 @@ function cardClickHandler (event) {
   let newMeasure = ''
   // console.log('cardClickHandler operation: ', operation)
   if (operation === 'play') {
-    play(measureInterpreter.getNotes(measure))
+
+    const notesToPlay = measureInterpreter.getNotesForTone(measure)//.forEach(note => {
+    //   note[2] += now
+    // })
+    console.log("before Tone.start()", Tone.context.state)
+
+    Tone.start()
+    console.log("after Tone.start()", Tone.context.state)
+    // playWithTone(notesToPlay)
+    
+    console.log('Tone.start() succeeded')
+    // console.log(Tone.context.state)
+
+    // play(measureInterpreter.getNotes(measure))
+    
+    
     return
   } else if (operation === 'flipv') {
     newMeasure = measureInterpreter.flipv(measure)
