@@ -2,40 +2,62 @@
 
 :root {
   /* colors */
-    --background-color: white;
-    --contrast-color: thistle;
-    --receding-color: gainsboro;
-    --phrase-color: whitesmoke;
-    --highlight-color: lightgray;
+    /* --white: white;
+    --lightest: whitesmoke;
+    --medium: gainsboro;
+    --darkest: lightgray; */
+    /* hsla(311, 36%, 93%, 1) */
+    --hsl-h: 311;
+    --hsl-s: 5%;
+    --hsl-l: 88%;
+    --hsl-hs: var(--hsl-h), var(--hsl-s);
+    --hsl-start: hsl(var(--hsl-hs), var(--hsl-l));
+    --hsl-lighter: hsl(var(--hsl-hs), calc(var(--hsl-l) + 10%));
+    --hsl-darker: hsl(var(--hsl-hs), calc(var(--hsl-l) - 10%));
+    --hsl-shadow: hsl(var(--hsl-hs), calc(var(--hsl-l) - 40%));
+    --shadow-depth: 3px;
+    --pos-shadow: var(--shadow-depth) var(--shadow-depth) calc(var(--shadow-depth) * 2);
+    --neg-shadow: calc(var(--shadow-depth) * -1) calc(var(--shadow-depth) * -1) calc(var(--shadow-depth) * 2);
 
-    color: var(--contrast-color);
+    --over-shadow: var(--pos-shadow)  var(--hsl-shadow),
+                  var(--neg-shadow)  var(--hsl-lighter);
+    --under-shadow: inset var(--pos-shadow)  var(--hsl-shadow),
+                    inset var(--neg-shadow) var(--hsl-lighter);
+    --card-shadow: var(--pos-shadow) var(--hsl-shadow);
+    --contrast: thistle;
+
+    color: var(--contrast);
     padding: 0;
     margin: 0;
 }
 
 ::-webkit-scrollbar {
-  background-color: var(--phrase-color);
+  /* background-color: var(--lightest); */
   border-radius: 10px;
-  border: 2px solid var(--receding-color);
+  /* border: 2px solid var(--medium); */
+  box-shadow: var(--under-shadow);
 }
 
 ::-webkit-scrollbar-thumb {
-  border-color: black;
-  border-width: 2px;
+  /* border-color: black; */
+  /* border-width: 2px; */
   border-radius: 10px;
-  border-style: solid;
-  background-color: var(--contrast-color);
+  /* border-style: solid; */
+  /* background-color: var(--contrast); */
+  box-shadow: var(--over-shadow);
+  background: linear-gradient(145deg, var(--hsl-start), var(--hsl-darker));
 }
 
 body {
   height: 100%;
   overflow-y: hidden;
+  background-color: var(--hsl-start);
 }
 
 #header {
   text-align: center;
   grid-area: title;
-  color: var(--contrast-color);
+  color: var(--contrast);
   letter-spacing: .2em;
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
@@ -49,7 +71,7 @@ body {
   "info music music music"
   "info work work score"
   "info overflow trash score";
-  background-color: var(--background-color);
+  /* background-color: var(--white); */
   gap: 15px;
   font-family: 'Rubik', sans-serif;
 }
@@ -57,22 +79,26 @@ body {
 
 #musicandcontrols {
   grid-area: music;
-  background-color: var(--highlight-color);
+  /* background-color: var(--darkest); */
   border-radius: 10px;
   padding: 10px;
   display: flex;
-
+  background-color: var(--hsl-start);
+  box-shadow: var(--card-shadow);
+  /* box-shadow: var(--under-shadow); */
+  z-index: 3;
 }
 
 #workspace {
   grid-area: work;
-  border-style: double;
+  /* border-style: double;
   border-width: 8px;
-  border-color: var(--receding-color);
-  background-color: var(--phrase-color);
+  border-color: var(--medium);
+  background-color: var(--lightest); */
   border-radius: 10px;
   overflow: hidden;
   position: relative;
+  box-shadow: var(--over-shadow);
 }
 
 #overflow {
@@ -81,21 +107,23 @@ body {
   grid-area: overflow;
   overflow-x: scroll;
   padding: 5px;
-  border-color: var(--receding-color);
+  /* border-color: var(--medium);
   border-style: solid;
-  border-width: 3px;
+  border-width: 3px; */
   border-radius: 10px;
+  box-shadow: var(--under-shadow);
 }
 
 #trash {
   grid-area: trash;
-  background-color: var(--highlight-color);
+  /* background-color: var(--darkest); */
   border-radius: 10px;
   background-size: min(50px, 20%);
   background-position: center;
   background-image: url(graphics/delete_FILL0_wght400_GRAD0_opsz48.svg);
   background-origin: content-box;
   background-repeat: no-repeat;
+  box-shadow: var(--under-shadow);
 }
 
 #score-area {
@@ -123,7 +151,7 @@ body {
 }
 
 .button {
-  background-color: var(--contrast-color);
+  background-color: var(--contrast);
   font-size: 1rem;
   border-radius: 5px;;
   border: none;
@@ -132,7 +160,7 @@ body {
 
 
 :hover.button {
-  background: var(--receding-color);
+  /* background: var(--medium); */
 }
 
 .material-symbols-rounded {
@@ -149,14 +177,16 @@ body {
   align-items: center;
   gap: 2px;
   padding: 2px;
-  background-color: var(--contrast-color);
+  /* background-color: var(--contrast); */
   border-radius: 5px;
   font-size: 0; /*The card div will be the wrong size without this setting*/
+  /* box-shadow: var(--over-shadow); */
+  box-shadow: var(--under-shadow);
 }
 
 #phrase {
   width: 100%;
-  background-color: var(--phrase-color);
+  /* background-color: var(--lightest); */
   background-image: url(graphics/staff.svg);
   background-origin: content-box;
   background-size: 100% 100%;
@@ -174,6 +204,7 @@ body {
   justify-content: space-evenly;
   align-content: center;
   padding-left: 5px;
+
 }
 
 .card-control > * {
@@ -185,6 +216,8 @@ body {
   aspect-ratio: 3 / 2;
   /* height: var(--card-height); */
   position: relative;
+  filter: drop-shadow(var(--card-shadow));
+  /* box-shadow: var(--under-shadow); */
 }
 
 .card-control {
@@ -291,9 +324,9 @@ svg {
 }
 
 #cardlist {
-  border-color: var(--highlight-color);
+  /* border-color: var(--darkest);
   border-width: 3px;
-  border-style: solid;
+  border-style: solid; */
   border-radius: 12px;
   padding: 4%;
 
@@ -303,8 +336,14 @@ svg {
   gap: 10px;
   align-content: space-around;
   overflow-y: scroll;
+  /* box-shadow: var(--over-shadow); */
+  box-shadow: var(--under-shadow);
 }
 
 .hidden {
   display: none;
+}
+
+.recess {
+  
 }
