@@ -117,26 +117,21 @@ const measureInterpreter = {
     return notes
   },
   getNotesFromArray: function (arrayOfMeasures) {
-    return this.getNotes(arrayOfMeasures.flat().join(''))
+    return this.getNotesForTone(arrayOfMeasures.flat().join(''))
   }
 }
 
-
 const playWithTone = (notes) => {
+  console.log('playWithTone', notes)
   const synth = new Tone.Synth().toDestination();
   const now = Tone.now()
 
-  console.log('tone.context.state', Tone.context.state)
   const notesToPlay = notes.forEach(note => {
+    console.log('note', note)
     note[2] += now
     synth.triggerAttackRelease(...note) // plays the note and releases it after the duration
   })
-  // synth.triggerAttackRelease("C4", "8n", now)
-  // synth.triggerAttackRelease("E4", "2n", now + .25)
-  // synth.triggerAttackRelease("G4", "2n", now + 1.25)
-
 }
-
 
 // plays sequences of music by interfacing with band.js
 // the callback is present as a reminder that it might be used to
@@ -255,6 +250,7 @@ function moveCardToPhrase (measure, event, draggedItemId) {
     console.log('moveCardToPhrase first if')
     //console.log('in phrase')
     addToPhrase(measure)
+    console.log('adding to phrase', measure)
     checkPhraseConsistency()
   } else if (event.currentTarget.dataset.measure !== measure) {
     checkPhraseConsistency()
@@ -342,9 +338,13 @@ const overflow = {
   addToDOM: function (measure) {
     //console.log(`add ${measure} to DOM`)
     const newElement = this.element.insertBefore(createCard(measure, `of-${this.nextId}`, true), this.element.firstChild)
-    newElement.addEventListener('click', (e) => {
-      play(measureInterpreter.getNotes(measure))
+    newElement.addEventListener('click', async (e) => {
+      // is this necessary?
+      console.log('questionable event listener triggered')
+      await Tone.start()
+      play(measureInterpreter.getNotesForTone(measure))
     })
+    console.log('Added event listener to new card')
     this.reserveDOMIds.unshift(`of-${this.nextId}`)
     this.nextId++
     //console.log(this.reserveDOMIds)
@@ -660,7 +660,8 @@ clearButton.onclick = () => {
 }
 
 const playAllButton = document.getElementById('playall')
-playAllButton.onclick = () => {
+playAllButton.onclick = async () => {
+  await Tone.start()
   phrase.playAll()
 }
 
@@ -673,7 +674,8 @@ addToScoreButton.onclick = () => {
 }
 
 const playScore = document.getElementById('playscore')
-playScore.onclick = () => {
+playScore.onclick = async () => {
+  await Tone.start()
   score.playAll()
   //console.log('all phrases in score', score.phrases)
 }
