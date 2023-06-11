@@ -77,7 +77,6 @@ const measureInterpreter = {
     }
   },
   interpretDurationForTone: function (duration) {
-    console.log(duration)
     switch (duration) {
       case 'h': return '2n'
       case 'q': return '4n'
@@ -86,26 +85,26 @@ const measureInterpreter = {
     }
   },
   getNotesForTone: function (measure) {
-    console.log(Tone.context.state)
     const notes = []
     let delay =  0
-    for (let note = 0; note < measure.length; note += this.noteCodeLength) {
-      const pitch = CMAJOR[parseInt(measure[note])]
-      const duration = this.interpretDurationForTone(measure[note + 1])
-      delay += duration == '8n' ? .5 
-                         : '4n' ? 1
-                         : 1.5 
+    // delay counts when to play a specific note relative to when the first 
+    // in the sequence of notes is played.
+    for (let index = 0; index < measure.length; index += this.noteCodeLength) {
+      // This loop iterates through noteCode pairs in a sequence of notes
+      // encoded as a string of noteCode pairs.
+      // the pitch is encoded at index, the duration at index + 1.
+      const pitch = CMAJOR[parseInt(measure[index])]
+      const duration = this.interpretDurationForTone(measure[index + 1]) 
       notes.push([pitch, duration, delay])
+      delay += duration == '8n' ? .25 
+             : duration == '4n' ? .5
+                                : 1
+      // These values would need to change to accomodate tempo customization.
     }
-    console.log(notes)
     return notes;
-    /*   
-    synth.triggerAttackRelease("C4", "8n", now)
-    synth.triggerAttackRelease("E4", "2n", now + .25)
-    synth.triggerAttackRelease("G4", "2n", now + 1.25) */
+
   },
   getNotes: function (measure) {
-    // console.log("getNotes string: ", measure)
     const notes = []
     for (let note = 0; note < measure.length; note += this.noteCodeLength) {
       notes.push(
@@ -124,27 +123,11 @@ const measureInterpreter = {
 
 
 const playWithTone = (notes) => {
-  console.log('play with Tone')
-  console.log(Tone.context.state)
-
-  //create a synth and connect it to the main output (your speakers)
-  console.log(notes)
   const synth = new Tone.Synth().toDestination();
   const now = Tone.now()
-  // const part = new Tone.Part((note, duration) => {
-  //   const type = duration == 'half' ? "2n" :
-  //                            'quarter' ? "4n" :
-  //                            "8n"
-  //   synth.triggerAttackRelease(note, type)
-  // })
-  // const notesForTone = measureInterpreter.getNotesForTone(notes)
-  // console.log(notesForTone)
-  console.log('notes 0', notes[0])
-  // synth.triggerAttackRelease(notes[0])
+
   console.log('tone.context.state', Tone.context.state)
   const notesToPlay = notes.forEach(note => {
-    console.log('tone.context.state', Tone.context.state)
-    console.log('note', note)
     note[2] += now
     synth.triggerAttackRelease(...note) // plays the note and releases it after the duration
   })
