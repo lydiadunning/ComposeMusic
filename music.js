@@ -139,13 +139,14 @@ const playWithTone = (notes) => {
   // })
   // const notesForTone = measureInterpreter.getNotesForTone(notes)
   // console.log(notesForTone)
-  console.log(notes[0])
-  synth.triggerAttackRelease(notes[0])
-  console.log(Tone.context.state)
+  console.log('notes 0', notes[0])
+  // synth.triggerAttackRelease(notes[0])
+  console.log('tone.context.state', Tone.context.state)
   const notesToPlay = notes.forEach(note => {
-    console.log(Tone.context.state)
+    console.log('tone.context.state', Tone.context.state)
+    console.log('note', note)
     note[2] += now
-    synth.triggerAttackRelease(...note)
+    synth.triggerAttackRelease(...note) // plays the note and releases it after the duration
   })
   // synth.triggerAttackRelease("C4", "8n", now)
   // synth.triggerAttackRelease("E4", "2n", now + .25)
@@ -505,7 +506,7 @@ function makeIconManager (iconId) {
 const addToScoreIcon = makeIconManager('addtoscore')
 const playScoreIcon = makeIconManager('playscore')
 
-function cardClickHandler (event) {
+async function cardClickHandler (event) {
   checkPhraseConsistency()
   console.log('cardClickHandler')
   // console.log('cardClickHandler eventtarget: ', event.target.parentElement.parentElement)
@@ -521,9 +522,9 @@ function cardClickHandler (event) {
     // })
     console.log("before Tone.start()", Tone.context.state)
 
-    Tone.start()
+    await Tone.start()
     console.log("after Tone.start()", Tone.context.state)
-    // playWithTone(notesToPlay)
+    playWithTone(notesToPlay)
     
     console.log('Tone.start() succeeded')
     // console.log(Tone.context.state)
