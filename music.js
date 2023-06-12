@@ -121,7 +121,7 @@ const measureInterpreter = {
   }
 }
 
-const playWithTone = (notes) => {
+const play = (notes) => {
   console.log('playWithTone', notes)
   const synth = new Tone.Synth().toDestination();
   const now = Tone.now()
@@ -131,25 +131,6 @@ const playWithTone = (notes) => {
     note[2] += now
     synth.triggerAttackRelease(...note) // plays the note and releases it after the duration
   })
-}
-
-// plays sequences of music by interfacing with band.js
-// the callback is present as a reminder that it might be used to
-// play music in succession.
-function play (notes /*, callback = () => {} */) {
-  playWithTone(notes)
-  return
-  // accepts a list of notes formatted to play and an optional callback function
-  var conductor = new window.BandJS()
-  conductor.setTimeSignature(4, 4)
-  conductor.setTempo(120)
-  var piano = conductor.createInstrument()
-  notes.forEach((x) => {
-    piano.note(x.duration, CMAJOR[x.pitch])
-  })
-  var player = conductor.finish()
-  player.play()
-  // conductor.setOnFinishedCallback(callback)
 }
 
 
@@ -500,21 +481,10 @@ async function cardClickHandler (event) {
   // console.log('cardClickHandler operation: ', operation)
   if (operation === 'play') {
 
-    const notesToPlay = measureInterpreter.getNotesForTone(measure)//.forEach(note => {
-    //   note[2] += now
-    // })
-    console.log("before Tone.start()", Tone.context.state)
+    const notesToPlay = measureInterpreter.getNotesForTone(measure)
 
     await Tone.start()
-    console.log("after Tone.start()", Tone.context.state)
-    playWithTone(notesToPlay)
-    
-    console.log('Tone.start() succeeded')
-    // console.log(Tone.context.state)
-
-    // play(measureInterpreter.getNotes(measure))
-    
-    
+    play(notesToPlay)
     return
   } else if (operation === 'flipv') {
     newMeasure = measureInterpreter.flipv(measure)
