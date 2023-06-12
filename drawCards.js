@@ -91,7 +91,7 @@ const drawCard = (function () {
 
   function drawNotehead (x, y, type) {
     const coords = {'cx': x, 'cy': y}
-    if (type === 'half') {
+    if (type === 'h') {
       return makeSvgWithAttributes(
         'circle',
         {
@@ -131,8 +131,8 @@ const drawCard = (function () {
   function drawEighthNotePair (loc1, loc2, stemUp) {
     const yStemEnd1 = stemAdjustY(loc1.y, stemUp, STEM_LENGTH)
     const yStemEnd2 = stemAdjustY(loc2.y, stemUp, STEM_LENGTH)
-    const head1 = drawNotehead(loc1.x, loc1.y, 'eighth')
-    const head2 = drawNotehead(loc2.x, loc2.y, 'eighth')
+    const head1 = drawNotehead(loc1.x, loc1.y, 'e')
+    const head2 = drawNotehead(loc2.x, loc2.y, 'e')
     const beam1 = drawBeam(stemAdjustX(loc1.x, stemUp), stemAdjustX(loc2.x, stemUp), loc1.y, loc2.y, yStemEnd1, yStemEnd2)
 
     return [head1, head2, beam1]
@@ -201,24 +201,30 @@ const drawCard = (function () {
   // drawAllNotes iterates through notes from the cardNotes array, calling
   // functions to create svg elements for each part of each note
   function drawAllNotes (cardNotes) {
+    // cardNotes is a string made up of a sequence of sets of two characters
+    // examples: '4h2q1e5e', '5q4e6e6e3e4e3e', '1q4h2q'
     const drawnNotes = []
     let noteCount = 0
-    // loops through quarter note sized chunks, 4 to a card
+    // loops through quarter note sized chunks, 4 to a card. 
+    // i correlates to the current chunk:  | : : : |
+    // noteCount correlates to the current note: '4h' or '2q' or '1e' 
+    // pitch is the first character in a note, duration is the second.
     for (let i = 0; i < 4; i++) {
-      const currentNote = cardNotes[noteCount]
+      const currentPitch = cardNotes[noteCount * 2]
       let xAxis = X_AXES[i]
-      const yAxis = VISUAL_STAFF[currentNote.pitch]
-      let stemUp = currentNote.pitch < 4 // boolean- false for notes on top of staff
-      const duration = currentNote.duration
-      if (duration === 'eighth') {
+      const yAxis = VISUAL_STAFF[currentPitch]
+      let stemUp = currentPitch < 4 // boolean- false for notes on top of staff
+      const duration = cardNotes[(noteCount * 2) + 1]
+
+      if (duration === 'e') {
         const xAxis1 = xAxis - X_AXIS_E_OFFSET
         // increments noteCount to draw two eighth notes
         noteCount++
         const xAxis2 = xAxis + X_AXIS_E_OFFSET
-        const secondNote = cardNotes[noteCount].pitch
-        const yAxis2 = VISUAL_STAFF[secondNote]
-        if (Math.abs(4 - currentNote.pitch) < Math.abs(4 - secondNote)) {
-          stemUp = secondNote < 4
+        const secondPitch = cardNotes[noteCount * 2]
+        const yAxis2 = VISUAL_STAFF[secondPitch]
+        if (Math.abs(4 - currentPitch) < Math.abs(4 - secondPitch)) {
+          stemUp = secondPitch < 4
         }
         // range of notes = 1-7.  center = 4
         // stemUp = stemUp || cardNotes[noteCount].note < 4 // just in case
@@ -237,7 +243,7 @@ const drawCard = (function () {
           x: xAxis.toString(),
           y: yAxis.toString()
         }, duration, stemUp))
-        if (duration === 'half') {
+        if (duration === 'h') {
           i++
         }
       }

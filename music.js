@@ -509,14 +509,12 @@ function setCardAttributes (card, id) {
 
 function createCard (measure, id, simple = null) {
   const card = document.createElement('div')
-  //console.log('measure: ', measure, 'id: ', id)
   setCardAttributes(card, id)
   card.dataset.measure = measure
   if (!simple) {
     card.appendChild(addCardControl())
   }
-  card.appendChild(drawCard(measureInterpreter.getNotes(measure)))
-  // console.log(cardHolder.dataset.cardnumber)
+  card.appendChild(drawCard(measure))
   card.addEventListener('dragstart', dragStartHandler)
   return card
 }
