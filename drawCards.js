@@ -14,17 +14,20 @@
 // the card.
 const drawCard = (function () {
   // many constants, to simplify shifts in layout.
-  const COLOR = 'thistle'
+  const STAFF_COLOR = 'thistle'
+  const NOTE_COLOR = 'black'
   const CARD_WIDTH = '300'
   const CARD_HEIGHT = '200'
   const BLACK_NOTE_RADIUS = '9'
   const HALF_NOTE_RADIUS = '7'
   const CIRCLE_STROKE_WIDTH = STEM_STROKE_WIDTH = '4'
   const X_AXES = [60, 120, 180, 240]
+  const CENTER = 30
   const X_AXIS_E_OFFSET = 15 // distance eighth note pairs shift from center.
   const STEM_LENGTH = 65
   const NOTE_SIDE = 7
   const COLUMNS = ['30', '90', '150', '210', '270']
+  const QUARTER_NOTE_WIDTH = '60'
   const STAFF_LINES = ['40', '70', '100', '130', '160']
   const STAFF_STROKE_WIDTH = '3'
   // the VISUAL_STAFF represents the y axes of notes.
@@ -47,13 +50,13 @@ const drawCard = (function () {
         'cy': y,
         'r': '1',
         'fill': 'red',
-        'stroke-color': 'red',
+        'stroke': 'red',
       }
     )
   }
 
   // returns the y axis for the top of a note's stem.
-  function stemAdjustY (y, stemUp, change) {
+  function stemAdjustY (y, stemUp, change = 0) {
     let y1 = Number(y)
     if (stemUp) {
       y1 -= change
@@ -74,7 +77,7 @@ const drawCard = (function () {
 
   function drawStem (x, y, stemUp) {
     const yStemEnd = stemAdjustY(y, stemUp, STEM_LENGTH)
-    const yStemStart = stemAdjustY(y, stemUp, 0)
+    const yStemStart = stemAdjustY(y, stemUp)
     return makeSvgWithAttributes(
       'line', 
       {
@@ -82,7 +85,7 @@ const drawCard = (function () {
         'x2': x, 
         'y1': yStemStart, 
         'y2': yStemEnd, 
-        'stroke': 'black',
+        'stroke': STAFF_COLOR,
         'stroke-width': STEM_STROKE_WIDTH,
         'stroke-linecap': 'round'
       }
@@ -91,13 +94,13 @@ const drawCard = (function () {
 
   function drawNotehead (x, y, type) {
     const coords = {'cx': x, 'cy': y}
-    if (type === 'h') {
+    if (type === 'half') {
       return makeSvgWithAttributes(
         'circle',
         {
           'r': HALF_NOTE_RADIUS,
           'fill': 'transparent',
-          'stroke': 'black',
+          'stroke': STAFF_COLOR,
           'stroke-width': CIRCLE_STROKE_WIDTH,
           ...coords
         }
@@ -108,7 +111,7 @@ const drawCard = (function () {
         'circle',
         {
           'r': BLACK_NOTE_RADIUS,
-          'fill': 'black',
+          'fill': STAFF_COLOR,
           ...coords
         }
       )
@@ -121,7 +124,7 @@ const drawCard = (function () {
       {
         'points': `${x1},${y1} ${x1},${yStemEnd1} ${x2},${yStemEnd2} ${x2},${y2}`,
         'fill': 'none',
-        'stroke': 'black',
+        'stroke': STAFF_COLOR,
         'stroke-width': STEM_STROKE_WIDTH,
         'stroke-linejoin': 'round',
       }
@@ -146,17 +149,17 @@ const drawCard = (function () {
     return [notehead, stem]
   }
 
-  function drawStaff () {
+  function drawStaff (width) {
     const staff = []
     for (let i = 0; i < 5; i++) { // There will always be five lines on a staff.
       const line = makeSvgWithAttributes(
         'line',
         {
           'x1': '0',
-          'x2': CARD_WIDTH,
+          'x2': width,
           'y1': STAFF_LINES[i],
           'y2': STAFF_LINES[i],
-          'stroke': COLOR,
+          'stroke': STAFF_COLOR,
           'stroke-width': STAFF_STROKE_WIDTH,
         }
       )
@@ -165,70 +168,29 @@ const drawCard = (function () {
     return staff
   }
 
-  function drawColumns () {
-    const columns = []
-    for (let i = 0; i < 5; i++) {
-      const line = makeSvgWithAttributes(
-        'line',
-        {
-          'x1': COLUMNS[i],
-          'x2': COLUMNS[i],
-          'y1': 0,
-          'y2': CARD_HEIGHT,
-          'stroke': COLOR,
-          'stroke-dasharray': '3, 5',
-        }
-      )
-      columns.push(line)
-    }
-    return columns
-  }
 
-  function drawCardOutline () {
-    return makeSvgWithAttributes(
-      'rect',
-      {
-        'width': CARD_WIDTH,
-        'height': CARD_HEIGHT,
-        'fill': 'white',
-        'stroke': COLOR,
-        'stroke-width': '5',
-        'rx': '15',
-      }
-    )
-  }
+  //note = {pitch: intNote, duration: ['half', 'quarter', 'eighth']}
+  // range of notes = 1-7.  center = 4
+  return (note, note2 = false) => {
 
-  // drawAllNotes iterates through notes from the cardNotes array, calling
-  // functions to create svg elements for each part of each note
-  function drawAllNotes (cardNotes) {
-    // cardNotes is a string made up of a sequence of sets of two characters
-    // examples: '4h2q1e5e', '5q4e6e6e3e4e3e', '1q4h2q'
     const drawnNotes = []
-    let noteCount = 0
     // loops through quarter note sized chunks, 4 to a card. 
     // i correlates to the current chunk:  | : : : |
     // noteCount correlates to the current note: '4h' or '2q' or '1e' 
     // pitch is the first character in a note, duration is the second.
-    for (let i = 0; i < 4; i++) {
-      const currentPitch = cardNotes[noteCount * 2]
-      let xAxis = X_AXES[i]
-      const yAxis = VISUAL_STAFF[currentPitch]
-      let stemUp = currentPitch < 4 // boolean- false for notes on top of staff
-      const duration = cardNotes[(noteCount * 2) + 1]
 
-      if (duration === 'e') {
-        const xAxis1 = xAxis - X_AXIS_E_OFFSET
-        // increments noteCount to draw two eighth notes
-        noteCount++
-        const xAxis2 = xAxis + X_AXIS_E_OFFSET
-        const secondPitch = cardNotes[noteCount * 2]
-        const yAxis2 = VISUAL_STAFF[secondPitch]
-        if (Math.abs(4 - currentPitch) < Math.abs(4 - secondPitch)) {
-          stemUp = secondPitch < 4
+    const {pitch, duration} = note
+    const yAxis = VISUAL_STAFF[pitch]
+    let stemUp = pitch < 4 // boolean- false for notes on top of staff
+    if (duration === 'eighth') {
+      if (note2 && note2.duration =='eighth') {
+        const {pitch2, duration2} = note2
+        const xAxis1 = CENTER - X_AXIS_E_OFFSET
+        const xAxis2 = CENTER + X_AXIS_E_OFFSET
+        const yAxis2 = VISUAL_STAFF[pitch2]
+        if (Math.abs(4 - pitch2) < Math.abs(4 - pitch2)) { // stem orientation
+          stemUp = pitch2 < 4
         }
-        // range of notes = 1-7.  center = 4
-        // stemUp = stemUp || cardNotes[noteCount].note < 4 // just in case
-
         drawnNotes.push(drawEighthNotePair({
           x: xAxis1.toString(),
           y: yAxis.toString()
@@ -238,53 +200,27 @@ const drawCard = (function () {
           y: yAxis2.toString()
         },
         stemUp))
-      } else {
-        drawnNotes.push(drawHalfOrQuarterNote({
-          x: xAxis.toString(),
-          y: yAxis.toString()
-        }, duration, stemUp))
-        if (duration === 'h') {
-          i++
-        }
       }
-      noteCount++
+    } else {
+      drawnNotes.push(drawHalfOrQuarterNote({
+        x: CENTER.toString(),
+        y: yAxis.toString()
+      }, duration, stemUp))
     }
-    return drawnNotes.flat()
-  }
+    let svgWidth = duration == 'half' ? QUARTER_NOTE_WIDTH * 2 : QUARTER_NOTE_WIDTH
 
-  // DEBUG - remove
-  // function drawNumber (cardNumber) {
-  //   const number = makeSvgWithAttributes(
-  //     'text',
-  //     {
-  //       'x': '10',
-  //       'y': '20',
-  //       'fill': 'black',
-  //       'font-family': 'Courier',
-  //       'font-weight': 'bold',
-  //     }
-  //   )
-  //   number.textContent = cardNumber
-  //   return number
-  // }
-
-  // drawCard calls all of the other functions for creating svg elements
-  // and combines them into an svg.
-  return (cardNotes) => {
     const svg = makeSvgWithAttributes(
       'svg',
       {
-        // 'width': CARD_WIDTH,
+        // 'width': svgWidth,
         // 'height': CARD_HEIGHT,
-        'viewBox': `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`
+        'viewBox': `0 0 ${svgWidth} ${CARD_HEIGHT}`
       }
     )
+    svg.appendChild(drawStaff(svgWidth))
     const svgComponents = [
-      drawCardOutline(),
-      // drawNumber(cardNumber),
-      drawColumns(),
-      drawStaff(),
-      drawAllNotes(cardNotes)
+      drawStaff(svgWidth),
+      drawnNotes
     ].flat()
     svgComponents.forEach(item => svg.appendChild(item))
     return svg
