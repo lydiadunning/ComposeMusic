@@ -1,32 +1,34 @@
 // For drawing card images using svg.
-// placeCard() accepts the desired card's number code, notes,
-// and the DOM element where it should appear.
+// Calling drawcard returns an svg image, but does not add it to the DOM
 
-// this file might be improved with object orientation
-
-// inputs:
-// locations on STAFF
-// information about notes
-// card number
+  /**
+   * drawCard's 
+   * 
+   * @param {Object} note1
+   * @param {number} note1.pitch - an integer, 1-7
+   * @param {string} note1.duration - 'half', 'quarter', or 'eighth'
+   * 
+   * @param {Object} [note2 = false] - same as note1, required for eighth notes
+  
+   * @return {SVG} an image displaying the note, or notes, on a scale.
+   */
 
 // drawCard is an immediately invoked function expression. It contains all
 // the information used to draw a card, and returns a function for drawing
 // the card.
 const drawCard = (function () {
   // many constants, to simplify shifts in layout.
+  // if reformatting, keep the capitalization, to simplify identifying constants.
   const STAFF_COLOR = 'thistle'
   const NOTE_COLOR = 'black'
-  const CARD_WIDTH = '300'
   const CARD_HEIGHT = '200'
   const BLACK_NOTE_RADIUS = '9'
   const HALF_NOTE_RADIUS = '7'
   const CIRCLE_STROKE_WIDTH = STEM_STROKE_WIDTH = '4'
-  const X_AXES = [60, 120, 180, 240]
   const CENTER = 30
   const X_AXIS_E_OFFSET = 15 // distance eighth note pairs shift from center.
   const STEM_LENGTH = 65
   const NOTE_SIDE = 7
-  const COLUMNS = ['30', '90', '150', '210', '270']
   const QUARTER_NOTE_WIDTH = '60'
   const STAFF_LINES = ['40', '70', '100', '130', '160']
   const STAFF_STROKE_WIDTH = '3'
@@ -35,6 +37,13 @@ const drawCard = (function () {
 
   // a function to set attributes of an svg component.
   // the attributes parameter expects an object
+
+  /**
+   * 
+   * @param {string} type 
+   * @param {object} attributes
+   * @returns {SVG} - an image which can be added to the document
+   */
   function makeSvgWithAttributes (type, attributes) {
     newSvgElement = document.createElementNS('http://www.w3.org/2000/svg', type)
     Object.keys(attributes).forEach(key => newSvgElement.setAttribute(key, attributes[key]))
@@ -85,7 +94,7 @@ const drawCard = (function () {
         'x2': x, 
         'y1': yStemStart, 
         'y2': yStemEnd, 
-        'stroke': STAFF_COLOR,
+        'stroke': NOTE_COLOR,
         'stroke-width': STEM_STROKE_WIDTH,
         'stroke-linecap': 'round'
       }
@@ -100,7 +109,7 @@ const drawCard = (function () {
         {
           'r': HALF_NOTE_RADIUS,
           'fill': 'transparent',
-          'stroke': STAFF_COLOR,
+          'stroke': NOTE_COLOR,
           'stroke-width': CIRCLE_STROKE_WIDTH,
           ...coords
         }
@@ -111,7 +120,7 @@ const drawCard = (function () {
         'circle',
         {
           'r': BLACK_NOTE_RADIUS,
-          'fill': STAFF_COLOR,
+          'fill': NOTE_COLOR,
           ...coords
         }
       )
@@ -124,7 +133,7 @@ const drawCard = (function () {
       {
         'points': `${x1},${y1} ${x1},${yStemEnd1} ${x2},${yStemEnd2} ${x2},${y2}`,
         'fill': 'none',
-        'stroke': STAFF_COLOR,
+        'stroke': NOTE_COLOR,
         'stroke-width': STEM_STROKE_WIDTH,
         'stroke-linejoin': 'round',
       }
@@ -168,20 +177,41 @@ const drawCard = (function () {
     return staff
   }
 
+  // this function narrows the range of permissible notes (they actually can run 0-8, but 0 and 8 are untested)
+  // it also filters out single eighth notes, double non-eighth notes, and notes that don't fall within a set duration.
+  // without this function, drawCards only filters half and eighth notes, all others are treated like quarter notes.
+  function noteValidator (note1, note2) {
+    const goodPitch = ([1, 2, 3, 4, 5, 6, 7].includes(note1.pitch)) 
+    const goodDuration = (['half', 'quarter'].includes(note1.duration))
+    if (note2) {
+      goodPitch = goodPitch && [1, 2, 3, 4, 5, 6, 7].includes(note2.pitch)
+      goodDuration = note1.duration === 'eighth' && note2.duration === 'eighth'
 
-  //note = {pitch: intNote, duration: ['half', 'quarter', 'eighth']}
-  // range of notes = 1-7.  center = 4
+      if (!goodPitch) console.error(`A note's pitch must be an integer from 1 to 7. These notes' pitches: ${note1.pitch}, ${note2.pitch}`)
+      if (!goodDuration) console.error(`Only eighth notes can be drawn in pairs. These notes' durations: ${note1.duration}, ${note2.duration} `)
+    } else {
+      if (!goodPitch) console.error(`A note's pitch must be an integer from 1 to 7. This note's pitch: ${note1.pitch}`)
+      if (!goodDuration) console.error(`A single note's duration must be 'half' or 'quarter'. This note's duration: ${note.pitch}`)
+    }
+
+    return goodPitch && goodDuration
+  }
+
+  /**
+   * @params: note object.  {pitch: int, duration: string}
+   *                         pitch must be 1-7
+   *                         duration must be 'half', 'quarter', or 'eighth'
+   *          optional second note object, for eighth note pairs
+   * @returns: an svg image displaying the note on a scale.
+   */
   return (note, note2 = false) => {
+    if (!noteValidator(note1, note2)) return
 
     const drawnNotes = []
-    // loops through quarter note sized chunks, 4 to a card. 
-    // i correlates to the current chunk:  | : : : |
-    // noteCount correlates to the current note: '4h' or '2q' or '1e' 
-    // pitch is the first character in a note, duration is the second.
-
     const {pitch, duration} = note
     const yAxis = VISUAL_STAFF[pitch]
     let stemUp = pitch < 4 // boolean- false for notes on top of staff
+
     if (duration === 'eighth') {
       if (note2 && note2.duration =='eighth') {
         const {pitch2, duration2} = note2
@@ -201,22 +231,24 @@ const drawCard = (function () {
         },
         stemUp))
       }
+      // want to draw a single eighth note? do that here.
     } else {
       drawnNotes.push(drawHalfOrQuarterNote({
         x: CENTER.toString(),
         y: yAxis.toString()
       }, duration, stemUp))
     }
+
     let svgWidth = duration == 'half' ? QUARTER_NOTE_WIDTH * 2 : QUARTER_NOTE_WIDTH
 
     const svg = makeSvgWithAttributes(
       'svg',
       {
-        // 'width': svgWidth,
-        // 'height': CARD_HEIGHT,
+
         'viewBox': `0 0 ${svgWidth} ${CARD_HEIGHT}`
       }
     )
+
     svg.appendChild(drawStaff(svgWidth))
     const svgComponents = [
       drawStaff(svgWidth),
