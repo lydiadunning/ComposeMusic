@@ -9,9 +9,8 @@ added to a composition.
 [https://lydiadunning.github.io/Ditty/](https://lydiadunning.github.io/Ditty/).
 Ditty runs in browser. It only works on desktop.
 
-
 ## Technologies and attribution
-* Vanilla Javascript, HTML, CSS.
+* Vanilla Javascript, HTML, CSS, SVG.
 * [band.js](https://github.com/meenie/band.js) - communicates with the [web audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
 * [Material Symbols](https://fonts.google.com/icons) - icons.
 
