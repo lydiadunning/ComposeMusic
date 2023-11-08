@@ -118,8 +118,24 @@ body {
   justify-content: flex-start;
 }
 
+button {
+  width: 50px;
+  border: none;
+  background: none;
+  height: 50px;
+  padding: 0;
+  cursor: pointer;
+}
+
 .icon {
   width: 50px;
+  height: 50px;
+}
+
+.play {
+  transform: translate(-4px);
+  width: 55px;
+  height: 55px;
 }
 
 .button {
@@ -183,7 +199,6 @@ body {
 .card {
   font-size: 0; /*The card div will be the wrong size without this setting*/
   aspect-ratio: 3 / 2;
-  /* height: var(--card-height); */
   position: relative;
 }
 
@@ -191,8 +206,6 @@ body {
   position:absolute;
   width: 100%;
   height: auto;
-  /* width: var(--card-width); */
-  /* height: var(--card-height); */
   display: grid;
   grid-template-columns: 15% 70% 15%;
   grid-template-rows: 20% 60% 20%;
@@ -211,7 +224,7 @@ body {
 }
 
 :hover.top {
-  /* background: radial-gradient(ellipse at top, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
+
   background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
   margin: -14% 0;
   padding: 0 26.5%;
@@ -226,7 +239,6 @@ body {
 }
 
 :hover.right {
-  /* background: radial-gradient(ellipse at right, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
   background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
   margin: 0 -60%;
   padding: 23.5% 0;
@@ -243,7 +255,6 @@ body {
 }
 
 :hover.bottom {
-  /* background: radial-gradient(ellipse at bottom, skyblue 20%, rgba(70,159,252,0.006061799719887961) 75%); */
   background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
   margin: -14% 0;
   padding: 0 26.5%;
@@ -258,7 +269,6 @@ body {
 }
 
 :hover.left {
-  /* background: radial-gradient(ellipse at left, skyblue 20%, rgba(70,159,252,0) 75%); */
   background-image: url(graphics/sync_FILL0_wght400_GRAD0_opsz48.svg);
   margin: 0 -60%;
   padding: 23.5% 0;
@@ -274,7 +284,6 @@ body {
 }
 
 :hover.center {
-  /* background: radial-gradient(ellipse at center , rgba(135, 206, 235, 0.5) 30%, rgba(70,159,252,0) 70%); */
   background-image: url(graphics/play_arrow_FILL0_wght400_GRAD0_opsz48.svg);
   padding: 0 16.5%;
   margin: -5% 0;
