@@ -113,6 +113,7 @@ function play (notes /*, callback = () => {} */) {
 
 
 // Utility function for debugging.
+// compares virtual notes with notes in the dom
 function checkPhraseConsistency () {
   const virtualMusic = phrase.music
   const phraseInDom = document.getElementById('phrase').children
@@ -156,56 +157,61 @@ function dragOverHandler (event) {
 }
 
 // drop handling functions:
+
+// when the entire phrase is replaced with a new phrase
 function replacePhrase (replacementPhrase) {
-  checkPhraseConsistency()
   phrase.music.forEach(measure => overflow.add(measure))
   phrase.rewrite(replacementPhrase)
   phraseInDom.rewrite(replacementPhrase)
-  checkPhraseConsistency()
 }
+
+// when a card is dragged from one location on the phrase to another
 function moveInPhrase (startIndex, targetIndex) {
-  checkPhraseConsistency()
   phrase.moveMeasure(startIndex, targetIndex)
   phraseInDom.moveCard(startIndex, targetIndex)
   checkPhraseConsistency ()
 }
+
+// when a card is dragged from any area to an empty spot on the phrase
 function addToPhrase (measure) {
-  checkPhraseConsistency()
   phrase.addMeasure(measure)
   phraseInDom.addCard(measure)
-  checkPhraseConsistency()
 }
+
+// when a card is dragged from another area and dropped on a card in the phrase
 function replaceInPhrase (measure, targetIndex, replacedMeasure) {
-  checkPhraseConsistency()
   overflow.add(replacedMeasure)
   phrase.replaceMeasure(measure, targetIndex)
   phraseInDom.replaceCard(measure, targetIndex)
-  checkPhraseConsistency()
 }
+
+// executes the above
 function moveCardToPhrase (measure, event, draggedItemId) {
+
+  // drop on empty spot
   if (event.currentTarget.id === 'phrase' && phrase.hasSpace()) {
-    checkPhraseConsistency()
     addToPhrase(measure)
-    checkPhraseConsistency()
+    
+  // drop on a card
   } else if (event.currentTarget.dataset.measure !== measure) {
-    checkPhraseConsistency()
     replaceInPhrase(measure, getIndexInDom(event.currentTarget.id), event.currentTarget.dataset.measure)
-    checkPhraseConsistency()
   }
+
+  // dragged from overflow
   if (draggedItemId.startsWith('of')) {
-    checkPhraseConsistency()
     overflow.remove(measure)
-    checkPhraseConsistency()
   }
+
+  // dragged from workspace
   if (draggedItemId.startsWith('work')) {
-    checkPhraseConsistency()
     document.getElementById('workspace').removeChild(document.getElementById(draggedItemId))
-    checkPhraseConsistency()
   }
 }
 
 function dropHandler (event) {
+  // the draggedItemId was placed in dataTranfer during the drag operation
   const draggedItemId = event.dataTransfer.getData('draggedItemId')
+
   // The event listener was applied to the event's currentTarget, the target
   // registers the event.
   // The currentTarget must be the same as either the target or
@@ -214,6 +220,8 @@ function dropHandler (event) {
   if (event.target !== event.currentTarget && event.target.parentElement.parentElement !== event.currentTarget) {
     return
   }
+
+  // the sourceId was placed in dataTranfer during the drag operation
   const source = event.dataTransfer.getData('sourceId')
   if (draggedItemId.startsWith('phrase')) {
     if (source === 'score') {
@@ -226,9 +234,11 @@ function dropHandler (event) {
   } else {
     moveCardToPhrase(event.dataTransfer.getData('measure'), event, draggedItemId)
   }
+
+  // when the phrase is full of cards, show the icon for adding a phrase to the score area.
   if (!addToScoreIcon.active && !phrase.hasSpace()) {
     addToScoreIcon.activate()
-  }
+  } 
 }
 
 const overflow = {
@@ -389,7 +399,6 @@ const addToScoreIcon = makeIconManager('addtoscore')
 const playScoreIcon = makeIconManager('playscore')
 
 function cardClickHandler (event) {
-  checkPhraseConsistency()
   const cardTarget = event.target.parentElement.parentElement
   const operation = event.target.dataset.op
   const measure = cardTarget.dataset.measure
@@ -417,7 +426,6 @@ function cardClickHandler (event) {
     parent.insertBefore(newCard, cardTarget)
     parent.removeChild(cardTarget)
   }
-  checkPhraseConsistency()
 }
 
 // this function generates the controls for a card.
