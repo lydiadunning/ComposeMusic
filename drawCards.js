@@ -252,21 +252,6 @@ const drawCard = (function () {
     return drawnNotes.flat()
   }
 
-  // DEBUG - remove
-  // function drawNumber (cardNumber) {
-  //   const number = makeSvgWithAttributes(
-  //     'text',
-  //     {
-  //       'x': '10',
-  //       'y': '20',
-  //       'fill': 'black',
-  //       'font-family': 'Courier',
-  //       'font-weight': 'bold',
-  //     }
-  //   )
-  //   number.textContent = cardNumber
-  //   return number
-  // }
 
   // drawCard calls all of the other functions for creating svg elements
   // and combines them into an svg.
@@ -274,14 +259,11 @@ const drawCard = (function () {
     const svg = makeSvgWithAttributes(
       'svg',
       {
-        // 'width': CARD_WIDTH,
-        // 'height': CARD_HEIGHT,
         'viewBox': `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`
       }
     )
     const svgComponents = [
       drawCardOutline(),
-      // drawNumber(cardNumber),
       drawColumns(),
       drawStaff(),
       drawAllNotes(cardNotes)
