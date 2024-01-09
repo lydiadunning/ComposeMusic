@@ -115,26 +115,30 @@ When it's time to draw a card to the DOM, the app calls the drawCard IIFE and ap
 ```js
   card.appendChild(drawCard(measure, measureInterpreter.getNotes(measure)))
 ```
-This IIFE starts with sanity-saving constants, mostly to set the sizes of elements within the SVG. Next there's a function to streamline building SVGs.
-```js
-  // a function to set attributes of an svg component.
-  // the attributes parameter expects an object
-  function makeSvgWithAttributes (type, attributes) {
-    newSvgElement = document.createElementNS('http://www.w3.org/2000/svg', type)
-    Object.keys(attributes).forEach(key => newSvgElement.setAttribute(key, attributes[key]))
-    return newSvgElement
-  }
-```
-See what's going on there? It abstracts away the details of creating the SVG, so each function for building a particular element only needs to know its type and attributes.
+This IIFE starts with sanity-saving constants, mostly to set the sizes of elements within the SVG. Changing these constants would modify the default dimensions of the svg image and the relative sizes and locations of elements within it.
 
-The IIFE's anonymous function uses makeSvgWithAttributes to create the SVG element, then calls the functions needed to draw each card.
-```js
-return (cardNotes) => {
+```  const COLOR = 'thistle'
+  const CARD_WIDTH = '300'
+  const CARD_HEIGHT = '200'
+  const BLACK_NOTE_RADIUS = '9'
+  const HALF_NOTE_RADIUS = '7'
+  const CIRCLE_STROKE_WIDTH = STEM_STROKE_WIDTH = '4'
+  const X_AXES = [60, 120, 180, 240]
+  const X_AXIS_E_OFFSET = 15 // distance eighth note pairs shift from center.
+  const STEM_LENGTH = 65
+  const NOTE_SIDE = 7
+  const COLUMNS = ['30', '90', '150', '210', '270']
+  const STAFF_LINES = ['40', '70', '100', '130', '160']
+  const STAFF_STROKE_WIDTH = '3'
+  // the VISUAL_STAFF represents the y axes of notes.
+  const VISUAL_STAFF = [160, 145, 130, 115, 100, 85, 70, 55, 40]
+```
+
+The function executed by the IIFE, which serves as a gateway to drawing music cards in svg, looks like this: 
+```return (cardNotes) => {
     const svg = makeSvgWithAttributes(
       'svg',
       {
-        'width': CARD_WIDTH,
-        'height': CARD_HEIGHT,
         'viewBox': `0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`
       }
     )
@@ -147,8 +151,50 @@ return (cardNotes) => {
     svgComponents.forEach(item => svg.appendChild(item))
     return svg
   }
-  ```
-drawAllNotes does the heavy lifting, iterating through the notes and doing the necessary calculations to draw them to svg. 
+```  
+It starts by creating an empty svg with dimensions taken from the constants declared earlier, then executes functions for drawing a card and all its contents in sequence. These functions return either a single svg or an array of svgs, each of which can be added to the base svg to create a single final image. This function takes all of these steps and returns the finished svg.
+
+The first function called, drawCardOutline, creates the card the notes appear on:
+```  function drawCardOutline () {
+    return makeSvgWithAttributes(
+      'rect',
+      {
+        'width': CARD_WIDTH,
+        'height': CARD_HEIGHT,
+        'fill': 'white',
+        'stroke': COLOR,
+        'stroke-width': '5',
+        'rx': '15',
+      }
+    )
+  }
+```
+drawCardOutline is very simple, making it a good example of the process used to draw svgs. I chose to abstract away the process of making svgs into a function, with the parameters `type and `attributes`. In this example, the type is `'rect'` and the attributes are the object defining the rectangle's dimensions and appearance. 
+
+makeSvgWithAttributes is the function to streamline building SVGs:
+```js
+  // a function to set attributes of an svg component.
+  // the attributes parameter expects an object
+  function makeSvgWithAttributes (type, attributes) {
+    newSvgElement = document.createElementNS('http://www.w3.org/2000/svg', type)
+    Object.keys(attributes).forEach(key => newSvgElement.setAttribute(key, attributes[key]))
+    return newSvgElement
+  }
+```
+See what's going on there? It creates an SVG element of the requested type, and sets its attributes one by one.
+Without abstracting away the svg construction, drawCardOutline would look very different:
+```  function drawCardOutline () {
+  newCard = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+  newCard.setAttribute('width', CARD_WIDTH)
+  newCard.setAttribute('height': CARD_HEIGHT)
+  newCard.setAttribute('fill': 'white')
+  newCard.setAttribute('stroke': COLOR)
+  newCard.setAttribute('stroke-width': '5')
+  newCard.setAttribute('rx': '15')
+```
+This code is denser and harder to read at a glance, even though it follows the same steps to achieve the same outcome. The makeSvgWithAttributes function shifts the focus of each draw function from interacting with the DOM to defining the desired svg element.
+
+Once the card's backdrop is complete drawAllNotes does the heavy lifting. It iterates through the notes and does the necessary calculations to draw them to svg. 
 Let's look at what happens with half notes.
 
 ```js
@@ -177,7 +223,52 @@ And what does that function look like?
     return [notehead, stem]
   }
 ```
-It goes on and on, repeatedly modifying the x and y axis values by constant amounts as determined by variables and using the new values to draw the shapes of notes. Ultimately, each component of each note is created using the makeSvgWithAttributes function and added to the SVG.
+After drawing the notehead, the ball on the end of the note, this function redefines the x coordinate to place the stem, the note's vertical line, on the correct side of the note. It draws the notehead, moves to the correct side of the note, and draws a vertical line, returning both to be added to the final svg.
+
+Noteheads are traditionally oblong, but, as a stylistic choice, this program draws them as a circle. The function for drawing noteheads is more complex than the function for drawing cards, because cards always look the same, but half-notes are drawn as open circles, while quarter notes and eighth notes are filled in.
+
+```
+  function drawNotehead (x, y, type) {
+    const coords = {'cx': x, 'cy': y}
+    if (type === 'h') {
+      return makeSvgWithAttributes(
+        'circle',
+        {
+          'r': HALF_NOTE_RADIUS,
+          'fill': 'transparent',
+          'stroke': 'black',
+          'stroke-width': CIRCLE_STROKE_WIDTH,
+          ...coords
+        }
+      )
+    } else {
+      return makeSvgWithAttributes(
+        'circle',
+        {
+          'r': BLACK_NOTE_RADIUS,
+          'fill': 'black',
+          ...coords
+        }
+      )
+    }
+  }
+```
+Each note's coordinates, `'cx'` in the SVG code, are measured from the center of the notehead. Because the width of the line around the note is added to the radius in SVG, the half note needs a different radius and stroke width to appear the same size as eighth notes and quarter notes.
+
+This is the stemAdjust function:
+```  function stemAdjustX (x, stemUp) {
+    if (stemUp) {
+      return (parseFloat(x) + NOTE_SIDE).toString()
+    } else {
+      return (parseFloat(x) - NOTE_SIDE).toString()
+    }
+  }
+```
+It only ads or subtracts the correct amount from the x coordinate. This requires converting the x coordinate value, a string, back to a numerical value, executing the change, and converting the value back. Since SVG is made up of strings, I chose to keep the coordinate numbers in string form and convert them briefly to numbers only when computations were necessary, immediately converting them back.
+
+All that's left to finish the half note is drawing the stem. This is a multi step process as well, identifying the y coordinate for the top of the stem, and calling makeSVGWithAttributes to create a line with the needed attributes.
+
+Ultimately, each component of each note is created using the makeSvgWithAttributes function and added to the SVG.
 
 ## Drag and Drop 
 ### What
