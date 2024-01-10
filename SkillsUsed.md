@@ -204,7 +204,7 @@ Let's look at what happens with half notes.
       let stemUp = currentNote.pitch < 4 // boolean- false for notes on top of staff
       const duration = currentNote.duration
 ```
-A measure can show anywhere from four to eight notes, but drawAllNotes only iterates four times. The xAxis to be applied to the current note is set to the value in the current iteration count's place in the X_AXES array constant. The note's pitch also determines which item in an array is set as the yAxis.
+A measure can show anywhere from four to eight notes, but drawAllNotes only iterates four times. The xAxis to be applied to the current note is set to the value in the current iteration count's place in the X_AXES array constant. The note's pitch also determines which item in an the VISUAL_STAFF array is set as the yAxis. Both of these axes are assigned numerical values, which will be converted to strings before drawing the note. Using a numerical type here allows the x-Axis to be modified according to a constant when drawing eighth note pairs, which have two notes and two x-axes.
 
 So let's draw the note.
 ```js
